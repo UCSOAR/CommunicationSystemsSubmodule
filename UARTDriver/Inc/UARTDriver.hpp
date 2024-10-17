@@ -1,39 +1,13 @@
-#ifndef CUBE_UART_DRIVER_HPP_
-#define CUBE_UART_DRIVER_HPP_
-/**
- ******************************************************************************
- * File Name          : UARTDriver.hpp
- * Description        : UART Driver
- *        Uses the STM32 LL library
- * Author             : cjchanx (Chris)
- ******************************************************************************
-*/
+#ifndef CUBE_UART_DRIVER_DMA_HPP_
+#define CUBE_UART_DRIVER_DMA_HPP_
 
-/* Includes ------------------------------------------------------------------*/
 #include "SystemDefines.hpp"
 #include "cmsis_os.h"
+#include <stdlib.h>
 
-// Example code on how to declare UART Driver Instances in the HPP
-#if EXAMPLE_CODE
-/* UART Driver Instances ------------------------------------------------------------------*/
-class UARTDriver;
-
-namespace Driver {
-	extern UARTDriver uart1;
-	extern UARTDriver uart2;
-	extern UARTDriver uart3;
-	extern UARTDriver uart5;
-}
-
-/* UART Driver Aliases ------------------------------------------------------------------*/
-namespace UART {
-	constexpr UARTDriver* Umbilical_RCU = &Driver::uart1;
-	constexpr UARTDriver* Radio = &Driver::uart2;
-	constexpr UARTDriver* Conduit_PBB = &Driver::uart3;
-	// UART 4 (GPS) uses HAL
-	constexpr UARTDriver* Debug = &Driver::uart5;
-}
-#endif
+#define ARRAY_LEN(x)            (sizeof(x) / sizeof((x)[0]))
+#define MAX_DMA_BUFFER_LEN     64
+#define STM_H7xx
 
 /* UART Receiver Base Class ------------------------------------------------------------------*/
 /**
@@ -47,44 +21,52 @@ public:
 	virtual void InterruptRxData(uint8_t errors) = 0;
 };
 
+/* Functions to Read from and Write to circular buffers */
+uint8_t read_byte(uint8_t*& read_head, uint8_t* buffer, uint16_t bufferSize);
+void write_byte(uint8_t byte, uint8_t*& write_head, uint8_t* buffer, uint16_t bufferSize);
 
-/* UART Driver Class ------------------------------------------------------------------*/
-/**
- * @brief This is a basic UART driver designed for Interrupt Rx and Polling Tx
- *	      based on the STM32 LL Library
- */
-class UARTDriver
-{
+class UARTDriver{
 public:
-	UARTDriver(USART_TypeDef* uartInstance) :
+    UARTDriver(USART_TypeDef* uartInstance, DMA_TypeDef* dmaInstance, uint16_t DMA_DATA_STREAM) :
 		kUart_(uartInstance),
-		rxCharBuf_(nullptr),
-		rxReceiver_(nullptr) {}
+    	kDma_(dmaInstance),
+        DMA_DATA_STREAM(DMA_DATA_STREAM) {}
 
-	// Polling Functions
-	bool Transmit(uint8_t* data, uint16_t len);
+    // DMA (buffer reading/writing) Functions
+    bool Transmit(uint8_t* data, uint16_t len);
+    bool Recieve(uint8_t* charBuf);
 
-	// Interrupt Functions
-	bool ReceiveIT(uint8_t* charBuf, UARTReceiverBase* receiver);
-
-
-	// Interrupt Handlers
-	void HandleIRQ_UART(); // This MUST be called inside USARTx_IRQHandler
+    // Interrupt Handlers
+    void HandleIRQ_UART(); // This MUST be called inside USARTx_IRQHandler
 
 protected:
-	// Helper Functions
-	bool HandleAndClearRxError();
-	bool GetRxErrors();
+    // Flag? for the DMA buffer filled over the bytes being read
+    bool DMA_DATA_OVERRUN_FLAG = false;
 
+    // Helper Functions
+    bool HandleAndClearRxError();
+    bool GetRxErrors();
 
-	// Constants
-	USART_TypeDef* kUart_; // Stores the UART instance
+    // constants
+    USART_TypeDef* kUart_; // Stores the UART instance
+    DMA_TypeDef* kDma_; // Stores the DMA instance
+    
+	/* DMA buffers */
+	/**
+	 * @brief DMA buffers
+	 * @details Messages will be in the form (bytewise): [message length1][message length0][message data][checkbit/stopbit]
+	 */
+    uint8_t rx_buffer[MAX_DMA_BUFFER_LEN]; // need a static allocated buffer to store recieved data while we aren't recieveing data (circular)
+    uint8_t lin_tx_buffer[MAX_DMA_BUFFER_LEN]; // static allocated buffer to store data to be sent (linear)
 
-	// Variables
-	uint8_t* rxCharBuf_; // Stores a pointer to the buffer to store the received data
-	UARTReceiverBase* rxReceiver_; // Stores a pointer to the receiver object
+	// Circular buffer read and write heads
+	uint8_t* rx_read_head = usart_rx_dma_buffer; // pointer to read from rx_buffer
+
+    uint16_t DMA_DATA_STREAM;
+
+	// UNUSED VARIABLES
+	/* Message queue ID */
+    osMessageQueueId_t usart_rx_dma_queue_id;
 };
 
-
-
-#endif // CUBE_UART_DRIVER_HPP_
+#endif
