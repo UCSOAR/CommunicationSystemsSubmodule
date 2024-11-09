@@ -39,12 +39,14 @@ bool DMA_UARTDriver::Receive(uint8_t* charBuf, uint8_t& buffIdx);
 
 bool DMA_UARTDriver::Transmit(uint8_t* data, uint16_t len)
 {
-	// HAL DMA transmission
-	// metabytes to send messages in any form (dont have to '\r' terminate like for debug messages)
-	uint8_t metaBytes = 0, headerBytes = 0;
+	uint8_t metabytes = 0;
+	if(!is_Debug){
+		metabytes = 2; // add stop bytes for non-debug messages
+	}
 
+	// HAL DMA transmission
 	// make sure the data wont overflow the buffer
-	if(len + metaBytes > MAX_DMA_BUFFER_LEN){
+	if(len + metabytes > MAX_DMA_BUFFER_LEN){
 		return false;
 	}
 
@@ -53,26 +55,20 @@ bool DMA_UARTDriver::Transmit(uint8_t* data, uint16_t len)
 		if(i > 10000) break; // TEMP fix for hal uart not readying error
 	}
 
-	// set length bytes for the message
-	if(!is_Debug){
-		lin_tx_buffer[0] = (uint8_t)(len & 0xFF00 >> 8);
-		lin_tx_buffer[1] = (uint8_t)(len & 0x00FF);
-		headerBytes = 2;
-		metaBytes = 3;
-	}
-
 	// copy the message to the buffer
 	for(int i = 0; i < len; i++){
-		lin_tx_buffer[i + headerBytes] = data[i]; // sets the data to the message buffer, with an offset if its not to serial
+		lin_tx_buffer[i] = data[i]; // sets the data to the message buffer, with an offset if its not to serial
 	}
 
-	// set the checkbyte in the buffer
-	if(!is_Debug){
-		lin_tx_buffer[len+2] = data[len-2] | (uint8_t)(len & 0x00FF); // takes the last byte of data and &'s it with length byte to get some random check
+	// set the stop bytes in the buffer
+	// can ignore for terminal communications
+	if(!isdebug){
+		lin_tx_buffer[len] = '\r';
+		lin_tx_buffer[len + 1] = '\n';
 	}
 
 	// starts the process of transmitting the data via DMA
-	if(HAL_UART_Transmit_DMA(hUart_, (uint8_t*)lin_tx_buffer, len + metaBytes)!= HAL_OK)
+	if(HAL_UART_Transmit_DMA(hUart_, (uint8_t*)lin_tx_buffer, len + metabytes)!= HAL_OK)
 	  {
 		/* Transfer error in transmission process */
 		return false;
@@ -88,41 +84,25 @@ bool UARTDriver::Receive(uint8_t* charBuf, uint8_t& buffIdx)
 
 	} // make sure we're receiving
 
-	// read the next byte in the curcular buffer
+	// read the next byte in the circular buffer
 	charBuf[buffIdx] = read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN);
 
 	if(charBuf[buffIdx] && is_Debug) Transmit(charBuf+buffIdx, 1); // send input response to debug terminal
 
 	// makes debug messages cleaner by eliminating the metadata
 	// requires specific messages to work (ie '\r\n' terminated)
-	if(is_Debug){
-		// loop until end of line character
-		while(charBuf[buffIdx] != '\n'){
+	// loop until end of line character
+	while(charBuf[buffIdx] != '\n'){
 
-			if(charBuf[buffIdx] == '\0') return false; // wait until message is finished
+		if(charBuf[buffIdx] == '\0') return false; // wait until message is finished
 
-			buffIdx++;
-			charBuf[buffIdx] = read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN); // continue to copy data
-		}
-
-		charBuf[buffIdx-1] = '\0'; // null terminate for a string
-		charBuf[buffIdx] = '\0';
-		buffIdx = 0; // reset the buffer
-
-	}else{
-		uint8_t len = (read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN) << 8) | (read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN));
-
-		for(int i = 0; i < len; i++){ // read the number of message bytes and copy into charbuf
-			charBuf[buffIdx] = read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN);
-			buffIdx++;
-		}
-		uint8_t checkByte = read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN); // check to make sure the transfer works
-
-		if(checkByte != (charBuf[buffIdx-2] | (charBuf[buffIdx-1] & 0x00FF))){
-			buffIdx = 0; // reset the transfer for failed transfer
-			return false; // check if the checkbyte is correct
-		}
+		buffIdx++;
+		charBuf[buffIdx] = read_byte(rx_read_head, rx_buffer, MAX_DMA_BUFFER_LEN); // continue to copy data
 	}
+
+	charBuf[buffIdx-1] = '\0'; // null terminate for a string
+	charBuf[buffIdx] = '\0';
+	buffIdx = 0; // reset the buffer
 
 	return true;
 }
