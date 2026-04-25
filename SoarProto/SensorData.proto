@@ -1,0 +1,82 @@
+/**
+ * FILE: SensorData.proto
+ * BRIEF: Message template to be used for any sensor data
+ * AUTHOR: JAD DINA
+ */
+
+syntax = "proto3";
+package Proto;
+
+/*--------------    SensorData    --------------*/
+
+// The Sensor Data Packet act as a wrapper for any sensor data
+message SensorData {
+    uint32 timestamp = 1;
+
+    oneof message {
+        
+        Barometer barometerMessage = 2;
+        Accelerometer accelerometerMessage = 3;
+        Magnetometer magnetometerMessage = 4;
+        Gyroscope gyroscoperMessage = 5;
+        Thermocouple thermocoupleMessage = 6;
+    }
+}
+
+/*------------------    Definition of Sensor Message Types    ------------------*/
+
+/*--------------    Barometer   --------------*/
+message Barometer{
+    int32 baro_pressure = 1;
+    int32 baro_temperature = 2;
+
+    SensorLoggingRate sensorLoggingRate = 3;
+
+    int32 LoggingIdx = 4;
+}
+
+/*--------------    Accelerometer    --------------*/
+message Accelerometer{
+    int32 accel_x = 1;
+    int32 accel_y = 2;
+    int32 accel_z = 3;
+
+    SensorLoggingRate sensorLoggingRate = 4;
+    int32 LoggingIdx = 5;
+}
+
+/*--------------    Magnetometer    --------------*/
+message Magnetometer{
+    int32 mag_x = 1;
+    int32 mag_y = 2;
+    int32 mag_z = 3;
+
+    SensorLoggingRate sensorLoggingRate = 4;
+
+    int32 LoggingIdx = 5;
+}
+
+/*--------------    Gyroscope    --------------*/
+message Gyroscope{
+    int32 gyro_x = 1;
+    int32 gyro_y = 2;
+    int32 gyro_z = 3;
+
+    SensorLoggingRate sensorLoggingRate = 4;
+
+    int32 LoggingIdx = 5;
+}
+
+/*--------------    Thermocouple    --------------*/
+message Thermocouple{
+    int32 termo_temperature = 1;
+
+    SensorLoggingRate sensorLoggingRate = 2;
+    int32 LoggingIdx = 3;
+}
+
+/*--------------    Sensor Logging Rate    --------------*/
+message SensorLoggingRate {
+    bool changeLoggingRate = 1;
+    uint32 newSensorLoggingRate = 2;
+}
