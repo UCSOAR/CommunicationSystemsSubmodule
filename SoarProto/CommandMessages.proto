@@ -1,0 +1,31 @@
+/**
+ * FILE: CommandMessages.proto
+ * BRIEF: Command messages are used to send commands to any boards. These messages are sent from the ground to the rocket.
+ * AUTHOR: JAD DINA
+ */
+
+syntax = "proto3";
+package Proto;
+
+
+message CommandMessages {
+
+    uint32 source_sequence_num = 1; // This is the sequence number of the message, should start at (1), if its 0 it does not need to be ACKed (ie. Non-essential Telemetry)
+    
+
+    // Message Data
+    oneof message {
+        // Command Messages
+        FsbCommand fsb_command = 2;
+    }
+}
+
+message FsbCommand{
+    enum Command{
+        START_LOGGING = 0;
+        STOP_LOGGING = 1;
+        SEND_FILES = 2;
+
+    }
+    Command fsb_message = 1;
+}
