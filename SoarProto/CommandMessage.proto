@@ -31,15 +31,15 @@ message CommandMessage {
     // Message Data
     oneof message {
         // Command Messages
-        DmbCommand dmb_command = 4;
+        FcbCommand fcb_command = 4;
         PbbCommand pbb_command = 5;
-        RcuCommand rcu_command = 6;
-        SobCommand sob_command = 7;
+        FsbCommand fsb_command = 6;
+        LrbCommand lrb_command = 7;
     }
 
 }
 
-message DmbCommand {
+message FcbCommand {
     enum Command {
         RSC_FIRST_INVALID = 0;
 
@@ -114,7 +114,7 @@ message PbbCommand {
 }
 
 // Not used in GUI V2
-message SobCommand {
+message LrbCommand {
     enum Command {
         
         SOB_NONE = 0;
@@ -132,7 +132,7 @@ message SobCommand {
     int32 command_param = 2; //for mass calibration
 }
 
-message RcuCommand {
+message FsbCommand {
     enum Command {
         RCU_NONE = 0;
 
