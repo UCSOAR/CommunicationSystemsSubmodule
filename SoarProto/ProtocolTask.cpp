@@ -9,10 +9,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ProtocolTask.hpp"
 #include "Command.hpp"
-#include "Utils.hpp"
+#include "CubeUtils.hpp"
 #include <cstring>
 
-#include "FlightTask.hpp"
 #include "UARTTask.hpp"
 #include "SystemDefines.hpp" // Note: Must include stm32x_hal.h in this file
 #include "cobs.h"
@@ -43,7 +42,7 @@ ProtocolTask::ProtocolTask(Proto::Node node, UARTDriver* uartDriver, uint16_t ua
 	kUart_(uartDriver), uartTaskCommand(uartTaskCmd), numUartErrors_(0)
 {
     // Setup Buffers
-    protocolRxBuffer = soar_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
+    protocolRxBuffer = cube_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
     memset(protocolRxBuffer, 0, PROTOCOL_RX_BUFFER_SZ_BYTES+1);
 
     // Setup index and flags
@@ -174,7 +173,7 @@ void ProtocolTask::SendData(uint8_t* data, uint16_t size, uint8_t msgId)
     // Wrap in the message header and checksum
     arr[0] = msgId;
     memcpy(&(arr[1]), data, size);
-    uint16_t chkSum = Utils::getCRC16(arr, size + 1);
+    uint16_t chkSum = Utils::GetCRC16(arr, size + 1);
     *((uint16_t*)&arr[preCobsSize - PROTOCOL_CHECKSUM_BYTES]) = chkSum;
 
     // Send the data by wrapping in a COBS frame and sending direct to UART Task
