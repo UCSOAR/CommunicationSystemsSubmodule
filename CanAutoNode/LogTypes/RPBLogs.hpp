@@ -21,10 +21,15 @@ struct RPB_CAMERA_RECORDING_COMMAND {
 	bool startRecording;
 };
 
+struct RPB_AIR_BRAKES_COMMAND {
+	bool openAirBrakes;
+};
+
 // Add CAN logs here in the order you want them
 #define RPB_CAN_LOGS \
 	X(RPB_CAMERA_POWER_COMMAND) \
-	X(RPB_CAMERA_RECORDING_COMMAND)
+	X(RPB_CAMERA_RECORDING_COMMAND) \
+	X(RPB_AIR_BRAKES_COMMAND)
 
 
 

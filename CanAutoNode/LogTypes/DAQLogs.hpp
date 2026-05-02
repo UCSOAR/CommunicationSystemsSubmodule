@@ -13,7 +13,7 @@
 
 // Custom Data Types
 struct DAQ_AIR_BRAKES_COMMAND {
-	bool openAirBrakes;
+	bool airBrakesGo;
 };
 
 // Add CAN logs here in the order you want them
