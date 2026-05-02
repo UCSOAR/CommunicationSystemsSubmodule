@@ -22,14 +22,11 @@ struct DAQ_AIR_BRAKES_COMMAND {
 	X(DAQ_AIR_BRAKES_COMMAND)
 
 
-
-
-
 #define X(x) sizeof(x),
 const CanAutoNodeDaughter::LogInit DAQ_Init[] = {DAQ_LOGS_X};
 #undef X
 
-#define X(x) DAQ_ ## x ## _LOGINDEX,
+#define X(x) _ ## x ## _LOGINDEX,
 enum DAQ_LogIndexes {DAQ_LOGS_X};
 #undef X
 

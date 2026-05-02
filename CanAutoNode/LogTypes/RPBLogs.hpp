@@ -31,14 +31,11 @@ struct RPB_AIR_BRAKES_COMMAND {
 	X(RPB_CAMERA_RECORDING_COMMAND) \
 	X(RPB_AIR_BRAKES_COMMAND)
 
-
-
-
 #define X(x) sizeof(x),
 const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
 #undef X
 
-#define X(x) RPB_ ## x ## _LOGINDEX,
+#define X(x) _ ## x ## _LOGINDEX,
 enum RPB_LogIndexes {RPB_CAN_LOGS};
 #undef X
 
