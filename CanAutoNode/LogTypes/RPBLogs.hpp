@@ -12,20 +12,29 @@
 #include "CanAutoNodeDaughter.hpp"
 
 
+// Custom Data Types
+struct RPB_CAMERA_POWER_COMMAND {
+	bool cameraOn;
+};
+
+struct RPB_CAMERA_RECORDING_COMMAND {
+	bool startRecording;
+};
+
 // Add CAN logs here in the order you want them
-#define RPB_LOGS_X \
-	X(ExampleDataA) \
-	X(ExampleDataB)
+#define RPB_CAN_LOGS \
+	X(RPB_CAMERA_POWER_COMMAND) \
+	X(RPB_CAMERA_RECORDING_COMMAND)
 
 
 
 
 #define X(x) sizeof(x),
-const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_LOGS_X};
+const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
 #undef X
 
 #define X(x) RPB_ ## x ## _LOGINDEX,
-enum RPB_LogIndexes {RPB_LOGS_X};
+enum RPB_LogIndexes {RPB_CAN_LOGS};
 #undef X
 
 #endif /* RPBLOGS_HPP_ */

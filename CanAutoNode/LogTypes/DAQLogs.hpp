@@ -11,11 +11,15 @@
 #include "LogStructs.hpp"
 #include "CanAutoNodeDaughter.hpp"
 
+// Custom Data Types
+struct DAQ_AIR_BRAKES_COMMAND {
+	bool openAirBrakes;
+};
 
 // Add CAN logs here in the order you want them
 #define DAQ_LOGS_X \
-	X(ExampleDataA) \
-	X(ExampleDataB)
+	X(CanImuData6Axis) \
+	X(DAQ_AIR_BRAKES_COMMAND)
 
 
 
