@@ -2,6 +2,7 @@
 #define CANAUTONODEMOTHERBOARD_HPP_
 #include "FDCan.h"
 #include "CanAutoNode.hpp"
+#include "CanBusTargets.hpp"
 
 class CanAutoNodeMotherboard : public CanAutoNode {
 
