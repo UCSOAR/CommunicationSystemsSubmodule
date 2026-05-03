@@ -30,9 +30,9 @@
 ::   the Netherlands
 ::
 
-:: This file is used to invoke protoc-gen-eams.py as a plugin to protoc on 
+:: This file is used to invoke protoc-gen-eams as a plugin to protoc on 
 :: Windows. The reason this has to be used is that protoc expects a binary or
 :: terminal script as plugin. Directly calling python scripts is not supported.
 
 set EmbeddedProtoDir=%~dp0\EmbeddedProto
-%EmbeddedProtoDir%\venv\Scripts\python %EmbeddedProtoDir%\generator\protoc-gen-eams.py --protoc-plugin
+call "%EmbeddedProtoDir%\protoc-gen-eams.bat"
