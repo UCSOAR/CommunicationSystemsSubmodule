@@ -36,7 +36,7 @@ const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
 #undef X
 
 #define X(x) _ ## x ## _LOGINDEX,
-enum RPB_LogIndexes {RPB_CAN_LOGS};
+enum RPB_LogIndexes {RPB_CAN_LOGS _COUNT};
 #undef X
 
 #endif /* RPBLOGS_HPP_ */
