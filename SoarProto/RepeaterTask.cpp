@@ -9,6 +9,7 @@
 #include "SystemDefines.hpp"
 #include "RepeaterTask.hpp"
 #include "cobs.h"
+#include "CubeUtils.hpp"
 
 /**
  * @brief Constructor, sets all member variables
@@ -121,7 +122,7 @@ void RepeaterTask::SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAU
     // Wrap in the message header and checksum
     arr[0] = (uint8_t)msgId;
     memcpy(&(arr[1]), data, size);
-    uint16_t chkSum = Utils::getCRC16(arr, size + 1);
+    uint16_t chkSum = Utils::GetCRC16(arr, size + 1);
     *((uint16_t*)&arr[preCobsSize - PROTOCOL_CHECKSUM_BYTES]) = chkSum;
 
     // Send the data by wrapping in a COBS frame and sending direct to UART Task

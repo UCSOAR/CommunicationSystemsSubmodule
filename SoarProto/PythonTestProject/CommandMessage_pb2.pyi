@@ -58,21 +58,37 @@ class FcbCommand(_message.Message):
     def __init__(self, command_enum: _Optional[_Union[FcbCommand.Command, str]] = ...) -> None: ...
 
 class PbbCommand(_message.Message):
-    __slots__ = ["command_enum"]
+    __slots__ = ("command_enum",)
     class Command(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-        __slots__ = []
-    COMMAND_ENUM_FIELD_NUMBER: _ClassVar[int]
-    PBB_CLOSE_MEV: PbbCommand.Command
+        __slots__ = ()
+        PBB_NONE: _ClassVar[PbbCommand.Command]
+        PBB_OPEN_MEV: _ClassVar[PbbCommand.Command]
+        PBB_CLOSE_MEV: _ClassVar[PbbCommand.Command]
+        PMB_LAST: _ClassVar[PbbCommand.Command]
     PBB_NONE: PbbCommand.Command
     PBB_OPEN_MEV: PbbCommand.Command
+    PBB_CLOSE_MEV: PbbCommand.Command
     PMB_LAST: PbbCommand.Command
+    COMMAND_ENUM_FIELD_NUMBER: _ClassVar[int]
     command_enum: PbbCommand.Command
     def __init__(self, command_enum: _Optional[_Union[PbbCommand.Command, str]] = ...) -> None: ...
 
 class FsbCommand(_message.Message):
     __slots__ = ["command_enum", "command_param"]
     class Command(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-        __slots__ = []
+        __slots__ = ()
+        SOB_NONE: _ClassVar[SobCommand.Command]
+        SOB_SLOW_SAMPLE_IR: _ClassVar[SobCommand.Command]
+        SOB_FAST_SAMPLE_IR: _ClassVar[SobCommand.Command]
+        SOB_TARE_LOAD_CELL: _ClassVar[SobCommand.Command]
+        SOB_CALIBRATE_LOAD_CELL: _ClassVar[SobCommand.Command]
+        SOB_LAST: _ClassVar[SobCommand.Command]
+    SOB_NONE: SobCommand.Command
+    SOB_SLOW_SAMPLE_IR: SobCommand.Command
+    SOB_FAST_SAMPLE_IR: SobCommand.Command
+    SOB_TARE_LOAD_CELL: SobCommand.Command
+    SOB_CALIBRATE_LOAD_CELL: SobCommand.Command
+    SOB_LAST: SobCommand.Command
     COMMAND_ENUM_FIELD_NUMBER: _ClassVar[int]
     COMMAND_PARAM_FIELD_NUMBER: _ClassVar[int]
     RCU_CALIBRATE_NOS1_LOAD_CELL: FsbCommand.Command
