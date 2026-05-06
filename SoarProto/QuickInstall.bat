@@ -19,11 +19,13 @@ call refreshenv
 pip install protobuf
 
 echo Setting up ProtocolBuffers...
-C:\ProgramData\Chocolatey\bin\choco.exe install protoc --version=3.6.1
+C:\ProgramData\Chocolatey\bin\choco.exe install protoc --version=25.0
 call refreshenv
 
 echo Setting up EmbeddedProto...
 cd EmbeddedProto
+set SETUPTOOLS_SCM_PRETEND_VERSION=1.0.0
 python setup.py
+set SETUPTOOLS_SCM_PRETEND_VERSION=
 
 pause

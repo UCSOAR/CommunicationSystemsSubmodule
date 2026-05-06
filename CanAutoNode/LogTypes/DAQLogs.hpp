@@ -27,7 +27,7 @@ const CanAutoNodeDaughter::LogInit DAQ_Init[] = {DAQ_LOGS_X};
 #undef X
 
 #define X(x) _ ## x ## _LOGINDEX,
-enum DAQ_LogIndexes {DAQ_LOGS_X _COUNT};
+enum DAQ_LogIndexes {DAQ_LOGS_X DAQ_COUNT};
 #undef X
 
 #endif /* DAQLOGS_HPP_ */
