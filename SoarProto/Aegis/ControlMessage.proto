@@ -45,8 +45,8 @@ message ControlMessage {
 /* Control / Flow Messages ------------------------------------------------------------------*/
 
 /* ACK and NACK should be used on all Control and Command messages, for important paths such as
-   RCU -> DMB, DMB -> PBB the sending node needs to keep a timer and alert the RCU operator if the
-   message is not ACKed within a certain time period. (In the case of DMB -> PBB attempting retransmits would be a good idea) */
+   FSB -> FCB, FCB -> PBB the sending node needs to keep a timer and alert the FSB operator if the
+   message is not ACKed within a certain time period. (In the case of FCB -> PBB attempting retransmits would be a good idea) */
 message AckNack {
     Node acking_msg_source = 1; // The source of the message that is being acknowledged or nacked
     MessageID acking_msg_id = 2; // The message ID of the message that is being acknowledged or nacked
@@ -91,7 +91,7 @@ message SystemState {
     }
 
     State sys_state = 1; // The current state of the system
-    optional RocketState rocket_state = 2; // If this is the DMB, this will respond with the current RocketSM State
+    optional RocketState rocket_state = 2; // If this is the FCB, this will respond with the current RocketSM State
 }
 
 /* System control commands may not necessarily be handled by the board */
