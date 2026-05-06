@@ -14,11 +14,17 @@
 
 // Custom Data Types
 struct RPB_CAMERA_POWER_COMMAND {
-	bool cameraOn;
+	uint8_t camera;
+	bool enable;
 };
 
 struct RPB_CAMERA_RECORDING_COMMAND {
-	bool startRecording;
+	uint8_t camera;
+	bool record;
+};
+
+struct RPB_CAMERA_SWITCH_COMMAND {
+	uint8_t camera;
 };
 
 struct RPB_AIR_BRAKES_COMMAND {
@@ -33,6 +39,7 @@ struct RPB_FROM_DAQ_AIR_BRAKES_LEVEL {
 #define RPB_CAN_LOGS \
 	X(RPB_CAMERA_POWER_COMMAND) \
 	X(RPB_CAMERA_RECORDING_COMMAND) \
+	X(RPB_CAMERA_SWITCH_COMMAND) \
 	X(RPB_AIR_BRAKES_COMMAND) \
 	X(RPB_FROM_DAQ_AIR_BRAKES_LEVEL)
 
