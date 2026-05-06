@@ -2,13 +2,44 @@
 
 ## Useful Info
 #### Quick Generate
-Run the [`GenerateProto.bat`](GenerateProto.bat) file to update the _C++ and _Python files
+Run the [`GenerateProto.bat`](GenerateProto.bat) file with any protocol folder to update that folder's `_C++` and `_Python` files.
+
+```
+GenerateProto.bat Aegis
+GenerateProto.bat Ouroboros
+GenerateProto.bat Jad
+```
+
+You can also generate a specific proto by passing the filename or proto path:
+
+```
+GenerateProto.bat Aegis CommandMessage.proto
+GenerateProto.bat Ouroboros TelemetryMessage.proto
+GenerateProto.bat Aegis\CommandMessage.proto
+GenerateProto.bat Ouroboros\TelemetryMessage.proto
+```
+
+Generated files are written beside the source proto:
+
+- `<ProtoFolder>\_C++`
+- `<ProtoFolder>\_Python`
+
+When generating a specific non-`CoreProto.proto` file, the script also compiles that folder's `CoreProto.proto` so imports are available in the same generated output folders.
+
+If generation fails with an EmbeddedProto dependency error, run [`QuickInstall.bat`](QuickInstall.bat) or run this from the `EmbeddedProto` folder:
+
+```
+python setup.py --ignore-version-diff
+```
+
 #### Manual Commands
  ```
- protoc --plugin=protoc-gen-eams=protoc-gen-eams.bat --eams_out=_C++ *.proto
+ cd Aegis
+ protoc --plugin=protoc-gen-eams=..\protoc-gen-eams.bat --proto_path=. --eams_out=_C++ CommandMessage.proto
  ```
  ```
- protoc --pyi_out=_Python --python_out=_Python *.proto
+ cd Aegis
+ protoc --proto_path=. --pyi_out=_Python --python_out=_Python CommandMessage.proto
  ```
 
 ## Protocol Description
@@ -34,20 +65,20 @@ Run the [`QuickInstall.bat`](QuickInstall.bat) file with elevated privileges. </
 #### C++
  - The installation process can get quite involved in Windows, as we'll be using EmbeddedProto, we won't necessarily need protoc's regular C++ output.
  - Download or clone [EmbeddedProto](https://github.com/Embedded-AMS/EmbeddedProto) and run the script `setup.py` contained inside
- - Inside the respective C++ project, include the _C++ folder inside this directory
+ - Inside the respective C++ project, include the generated `_C++` folder for the protocol set you are using
  - Run this to compile the protocolbuffers files:
  ```
- protoc --plugin=protoc-gen-eams=protoc-gen-eams.bat --eams_out=_C++ *.proto
+ GenerateProto.bat Aegis
  ```
 
 <!--- Follow [this](https://github.com/protocolbuffers/protobuf/tree/main/python#installation). -->
 #### Python 
  - Download [this](https://github.com/protocolbuffers/protobuf/releases/download/v21.12/protoc-21.12-win64.zip) and drag protoc.exe somewhere on PATH
  - Alternatively, run `choco install protoc` if you have Chocolatey package manager
- - Inside the respective Python project, include the _Python folder inside this directory.
+ - Inside the respective Python project, include the generated `_Python` folder for the protocol set you are using.
  - Run this to compile the protocolbuffers files:
  ```
- protoc --pyi_out=_Python --python_out=_Python *.proto
+ GenerateProto.bat Aegis
  ```
     
 
@@ -58,7 +89,7 @@ Run the [`QuickInstall.bat`](QuickInstall.bat) file with elevated privileges. </
 ### C++
 SoarProto has 3 folders that must be included. The list is as follows:
 - SoarProto folder [(`ProtocolTask.hpp`)](https://github.com/StudentOrganisationForAerospaceResearch/SoarProto/blob/master/ProtocolTask.hpp) (SoarProto Root Directory)
-- [`_C++`](https://github.com/StudentOrganisationForAerospaceResearch/SoarProto/tree/master/_C%2B%2B) folder
+- The generated `_C++` folder under the protocol set you are using, such as `Aegis\_C++` or `Ouroboros\_C++`
 - [`_EmbeddedProtoLib`](https://github.com/StudentOrganisationForAerospaceResearch/SoarProto/tree/master/_EmbeddedProtoLib) folder
 
 ProtocolTask is designed to be a parent class which handles all of the logic for parsing / encoding / decoding protobuf messages. An example implementation can be found in [AvionicsSoftware](https://github.com/StudentOrganisationForAerospaceResearch/AvionicsSoftware) under Components/SoarProtocol where DMBProtocolTask.cpp/hpp are defined. Some changes may be required to the rest of the codebase to support it, such as in Utils.
