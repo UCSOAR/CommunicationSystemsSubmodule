@@ -68,41 +68,41 @@ message FcbCommand {
         // RSC_POWER_TRANSITION_ONBOARD = 12;      // Change power source to onboard
         // RSC_POWER_TRANSITION_EXTERNAL = 13;     // Change power source to external power
         // RSC_GOTO_FILL, // Transition back
-        RSC_GOTO_IGNITION = 14; // Ready for ignition sequence - Transition to IGNITION state
+        RSC_GOTO_IGNITION = 12; // Ready for ignition sequence - Transition to IGNITION state
 
         //-- IGNITION --
-        RSC_IGNITION_TO_LAUNCH = 15;   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
+        RSC_IGNITION_TO_LAUNCH = 13;   // Confirm igniter actuation - Transition to LAUNCH state (MEV OPEN)
         // RSC_GOTO_ARM      // Non-confirm igniter actuation - Transition back to ARM state   
 
         //-- LAUNCH --
         // * These flight sequence commands can be replaced with direct calls to transition state IF possible
-        RSC_LAUNCH_TO_BURN = 16; // Internal command, should not be triggered externally
+        RSC_LAUNCH_TO_BURN = 14; // Internal command, should not be triggered externally
         
         //-- BURN --
-        RSC_BURN_TO_COAST = 17; // Internal command, should not be triggered externally
+        RSC_BURN_TO_COAST = 15; // Internal command, should not be triggered externally
         
         //-- COAST --
-        RSC_COAST_TO_DESCENT = 18; // Internal command, should not be triggered externally
-        
-        //-- DESCENT --
-        RSC_DESCENT_TO_RECOVERY = 19; // Internal command, should not be triggered externally
+        RSC_COAST_TO_BRAKING = 16; // Internal command, should not be triggered externally
+        RSC_COAST_TO_DESCENT = 17; // Skip braking if rocket is undershooting its target apogee
 
-        //-- ABORT --
-        // RSC_GOTO_PRELAUNCH, // Confirm transition back into prelaunch state
+        //-- DESCENT --
+        RSC_BRAKING_TO_DESCENT = 18; // Internal command, should not be triggered externally
+
+        //-- TOUCHDOWN --
+        RSC_DESCENT_TO_TOUCHDOWN = 19; // Internal command, should not be triggered externally
 
         //-- GENERAL --
-        RSC_MANUAL_IGNITION_CONFIRMED = 25; // NOTE: THIS IS UNUSED WHEN IGNITION SEQUENCE IS BYPASSED, we use the RSC_IGNITION_TO_LAUNCH command instead
+        RSC_MANUAL_IGNITION_CONFIRMED = 20; // NOTE: THIS IS UNUSED WHEN IGNITION SEQUENCE IS BYPASSED, we use the RSC_IGNITION_TO_LAUNCH command instead
 
         //-- TEST --
-        RSC_GOTO_TEST = 20;
-        RSC_TEST_MEV_OPEN = 21;
-        
-        //RSC_MEV_CLOSE
-        RSC_TEST_MEV_ENABLE = 22;
-        RSC_TEST_MEV_DISABLE = 23;
+        RSC_GOTO_TEST = 21;
+    //    RSC_MEV_CLOSE;
+        RSC_TEST_MEV_OPEN = 22;
+        RSC_TEST_MEV_ENABLE = 23;
+        RSC_TEST_MEV_DISABLE = 24;
 
         //-- TECHNICAL --
-        RSC_NONE = 24;  // Invalid command, must be last
+        RSC_NONE = 25;   // Invalid command, must be last
     }
     
     Command command_enum = 1;
@@ -115,7 +115,10 @@ message PbbCommand {
         PBB_OPEN_MEV = 1;
         PBB_CLOSE_MEV = 2;
 
-        PMB_LAST = 5;
+        PBB_OPEN_DRAIN = 3;
+        PBB_CLOSE_DRAIN = 4;
+
+        PBB_LAST = 5;
     }
     
     Command command_enum = 1;
@@ -126,14 +129,11 @@ message LrbCommand {
     enum Command {
         
         LRB_NONE = 0;
-
-        LRB_SLOW_SAMPLE_IR = 1;
-        LRB_FAST_SAMPLE_IR = 2;
         
-        LRB_TARE_LOAD_CELL = 3;
-        LRB_CALIBRATE_LOAD_CELL = 4;
+        LRB_TARE_LOAD_CELL = 1;
+        LRB_CALIBRATE_LOAD_CELL = 2;
 
-        LRB_LAST = 5;
+        LRB_LAST = 3;
     }
     
     Command command_enum = 1;
