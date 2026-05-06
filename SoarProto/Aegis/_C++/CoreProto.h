@@ -17,10 +17,10 @@ enum class Node : uint32_t
   NODE_INVALID = 0,
   NODE_UNKNOWN = 1,
   NODE_ANY = 2,
-  NODE_RCU = 3,
-  NODE_DMB = 4,
+  NODE_FSB = 3,
+  NODE_FCB = 4,
   NODE_PBB = 5,
-  NODE_SOB = 6
+  NODE_LRB = 6
 };
 
 enum class MessageID : uint32_t

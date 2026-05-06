@@ -7,7 +7,7 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class TelemetryMessage(_message.Message):
-    __slots__ = ("source", "target", "gps", "baro", "imu", "battery", "flashState", "fcbPressure", "pbbPressure", "pbbTemperature", "combustionControlStatus", "fsbPressure", "fsbTemperature", "nosLoadCell", "relayStatus", "padBoxStatus", "launchRailLoadCell", "lrbTemperature", "pressureLog", "heaterStatus")
+    __slots__ = ("source", "target", "gps", "baro", "imu", "battery", "flashState", "fcbPressure", "fcbtemperature", "fcbControlStatus", "pbbPressure", "pbbTemperature", "pbbControlStatus", "fsbPressure", "fsbTemperature", "nosLoadCell", "relayStatus", "padBoxStatus", "launchRailLoadCell", "lrbTemperature", "pressureLog", "heaterStatus")
     SOURCE_FIELD_NUMBER: _ClassVar[int]
     TARGET_FIELD_NUMBER: _ClassVar[int]
     GPS_FIELD_NUMBER: _ClassVar[int]
@@ -16,9 +16,11 @@ class TelemetryMessage(_message.Message):
     BATTERY_FIELD_NUMBER: _ClassVar[int]
     FLASHSTATE_FIELD_NUMBER: _ClassVar[int]
     FCBPRESSURE_FIELD_NUMBER: _ClassVar[int]
+    FCBTEMPERATURE_FIELD_NUMBER: _ClassVar[int]
+    FCBCONTROLSTATUS_FIELD_NUMBER: _ClassVar[int]
     PBBPRESSURE_FIELD_NUMBER: _ClassVar[int]
     PBBTEMPERATURE_FIELD_NUMBER: _ClassVar[int]
-    COMBUSTIONCONTROLSTATUS_FIELD_NUMBER: _ClassVar[int]
+    PBBCONTROLSTATUS_FIELD_NUMBER: _ClassVar[int]
     FSBPRESSURE_FIELD_NUMBER: _ClassVar[int]
     FSBTEMPERATURE_FIELD_NUMBER: _ClassVar[int]
     NOSLOADCELL_FIELD_NUMBER: _ClassVar[int]
@@ -36,9 +38,11 @@ class TelemetryMessage(_message.Message):
     battery: Battery
     flashState: Flash
     fcbPressure: FcbPressure
+    fcbtemperature: FcbTemperature
+    fcbControlStatus: FcbControlStatus
     pbbPressure: PbbPressure
     pbbTemperature: PbbTemperature
-    combustionControlStatus: CombustionControlStatus
+    pbbControlStatus: PbbControlStatus
     fsbPressure: FsbPressure
     fsbTemperature: FsbTemperature
     nosLoadCell: NosLoadCell
@@ -48,7 +52,7 @@ class TelemetryMessage(_message.Message):
     lrbTemperature: LrbTemperature
     pressureLog: PressureLog
     heaterStatus: HeaterStatus
-    def __init__(self, source: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., target: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., gps: _Optional[_Union[Gps, _Mapping]] = ..., baro: _Optional[_Union[Baro, _Mapping]] = ..., imu: _Optional[_Union[Imu, _Mapping]] = ..., battery: _Optional[_Union[Battery, _Mapping]] = ..., flashState: _Optional[_Union[Flash, _Mapping]] = ..., fcbPressure: _Optional[_Union[FcbPressure, _Mapping]] = ..., pbbPressure: _Optional[_Union[PbbPressure, _Mapping]] = ..., pbbTemperature: _Optional[_Union[PbbTemperature, _Mapping]] = ..., combustionControlStatus: _Optional[_Union[CombustionControlStatus, _Mapping]] = ..., fsbPressure: _Optional[_Union[FsbPressure, _Mapping]] = ..., fsbTemperature: _Optional[_Union[FsbTemperature, _Mapping]] = ..., nosLoadCell: _Optional[_Union[NosLoadCell, _Mapping]] = ..., relayStatus: _Optional[_Union[RelayStatus, _Mapping]] = ..., padBoxStatus: _Optional[_Union[PadBoxStatus, _Mapping]] = ..., launchRailLoadCell: _Optional[_Union[LaunchRailLoadCell, _Mapping]] = ..., lrbTemperature: _Optional[_Union[LrbTemperature, _Mapping]] = ..., pressureLog: _Optional[_Union[PressureLog, _Mapping]] = ..., heaterStatus: _Optional[_Union[HeaterStatus, _Mapping]] = ...) -> None: ...
+    def __init__(self, source: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., target: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., gps: _Optional[_Union[Gps, _Mapping]] = ..., baro: _Optional[_Union[Baro, _Mapping]] = ..., imu: _Optional[_Union[Imu, _Mapping]] = ..., battery: _Optional[_Union[Battery, _Mapping]] = ..., flashState: _Optional[_Union[Flash, _Mapping]] = ..., fcbPressure: _Optional[_Union[FcbPressure, _Mapping]] = ..., fcbtemperature: _Optional[_Union[FcbTemperature, _Mapping]] = ..., fcbControlStatus: _Optional[_Union[FcbControlStatus, _Mapping]] = ..., pbbPressure: _Optional[_Union[PbbPressure, _Mapping]] = ..., pbbTemperature: _Optional[_Union[PbbTemperature, _Mapping]] = ..., pbbControlStatus: _Optional[_Union[PbbControlStatus, _Mapping]] = ..., fsbPressure: _Optional[_Union[FsbPressure, _Mapping]] = ..., fsbTemperature: _Optional[_Union[FsbTemperature, _Mapping]] = ..., nosLoadCell: _Optional[_Union[NosLoadCell, _Mapping]] = ..., relayStatus: _Optional[_Union[RelayStatus, _Mapping]] = ..., padBoxStatus: _Optional[_Union[PadBoxStatus, _Mapping]] = ..., launchRailLoadCell: _Optional[_Union[LaunchRailLoadCell, _Mapping]] = ..., lrbTemperature: _Optional[_Union[LrbTemperature, _Mapping]] = ..., pressureLog: _Optional[_Union[PressureLog, _Mapping]] = ..., heaterStatus: _Optional[_Union[HeaterStatus, _Mapping]] = ...) -> None: ...
 
 class Gps(_message.Message):
     __slots__ = ("latitude", "longitude", "antenna_altitude", "geo_id_altitude", "total_altitude", "time")
@@ -142,49 +146,55 @@ class FcbPressure(_message.Message):
     upper_pv_pressure: int
     def __init__(self, upper_pv_pressure: _Optional[int] = ...) -> None: ...
 
+class FcbTemperature(_message.Message):
+    __slots__ = ("upper_pv_tc", "vent_solenoid_tc", "dip_tube_tc")
+    UPPER_PV_TC_FIELD_NUMBER: _ClassVar[int]
+    VENT_SOLENOID_TC_FIELD_NUMBER: _ClassVar[int]
+    DIP_TUBE_TC_FIELD_NUMBER: _ClassVar[int]
+    upper_pv_tc: int
+    vent_solenoid_tc: int
+    dip_tube_tc: int
+    def __init__(self, upper_pv_tc: _Optional[int] = ..., vent_solenoid_tc: _Optional[int] = ..., dip_tube_tc: _Optional[int] = ...) -> None: ...
+
+class FcbControlStatus(_message.Message):
+    __slots__ = ("vent_open",)
+    VENT_OPEN_FIELD_NUMBER: _ClassVar[int]
+    vent_open: bool
+    def __init__(self, vent_open: bool = ...) -> None: ...
+
 class PbbPressure(_message.Message):
-    __slots__ = ("ib_pressure", "upper_pv_pressure", "lower_pv_pressure")
+    __slots__ = ("ib_pressure", "lower_pv_pressure")
     IB_PRESSURE_FIELD_NUMBER: _ClassVar[int]
-    UPPER_PV_PRESSURE_FIELD_NUMBER: _ClassVar[int]
     LOWER_PV_PRESSURE_FIELD_NUMBER: _ClassVar[int]
     ib_pressure: int
-    upper_pv_pressure: int
     lower_pv_pressure: int
-    def __init__(self, ib_pressure: _Optional[int] = ..., upper_pv_pressure: _Optional[int] = ..., lower_pv_pressure: _Optional[int] = ...) -> None: ...
+    def __init__(self, ib_pressure: _Optional[int] = ..., lower_pv_pressure: _Optional[int] = ...) -> None: ...
 
 class PbbTemperature(_message.Message):
-    __slots__ = ("ib_temperature", "upper_pv_tc1", "upper_pv_tc2", "upper_pv_tc3", "lower_pv_tc1", "lower_pv_tc2")
+    __slots__ = ("ib_temperature", "lower_pv_tc1", "low_solenoid_heater_tc")
     IB_TEMPERATURE_FIELD_NUMBER: _ClassVar[int]
-    UPPER_PV_TC1_FIELD_NUMBER: _ClassVar[int]
-    UPPER_PV_TC2_FIELD_NUMBER: _ClassVar[int]
-    UPPER_PV_TC3_FIELD_NUMBER: _ClassVar[int]
     LOWER_PV_TC1_FIELD_NUMBER: _ClassVar[int]
-    LOWER_PV_TC2_FIELD_NUMBER: _ClassVar[int]
+    LOW_SOLENOID_HEATER_TC_FIELD_NUMBER: _ClassVar[int]
     ib_temperature: int
-    upper_pv_tc1: int
-    upper_pv_tc2: int
-    upper_pv_tc3: int
     lower_pv_tc1: int
-    lower_pv_tc2: int
-    def __init__(self, ib_temperature: _Optional[int] = ..., upper_pv_tc1: _Optional[int] = ..., upper_pv_tc2: _Optional[int] = ..., upper_pv_tc3: _Optional[int] = ..., lower_pv_tc1: _Optional[int] = ..., lower_pv_tc2: _Optional[int] = ...) -> None: ...
+    low_solenoid_heater_tc: int
+    def __init__(self, ib_temperature: _Optional[int] = ..., lower_pv_tc1: _Optional[int] = ..., low_solenoid_heater_tc: _Optional[int] = ...) -> None: ...
 
-class CombustionControlStatus(_message.Message):
-    __slots__ = ("vent_open", "drain_open", "mev_open")
-    VENT_OPEN_FIELD_NUMBER: _ClassVar[int]
+class PbbControlStatus(_message.Message):
+    __slots__ = ("drain_open", "mev_open")
     DRAIN_OPEN_FIELD_NUMBER: _ClassVar[int]
     MEV_OPEN_FIELD_NUMBER: _ClassVar[int]
-    vent_open: bool
     drain_open: bool
     mev_open: bool
-    def __init__(self, vent_open: bool = ..., drain_open: bool = ..., mev_open: bool = ...) -> None: ...
+    def __init__(self, drain_open: bool = ..., mev_open: bool = ...) -> None: ...
 
 class HeaterStatus(_message.Message):
-    __slots__ = ("upper_pv_tc2_heater_on", "lower_pv_tc2_heater_on")
-    UPPER_PV_TC2_HEATER_ON_FIELD_NUMBER: _ClassVar[int]
-    LOWER_PV_TC2_HEATER_ON_FIELD_NUMBER: _ClassVar[int]
-    upper_pv_tc2_heater_on: bool
-    lower_pv_tc2_heater_on: bool
-    def __init__(self, upper_pv_tc2_heater_on: bool = ..., lower_pv_tc2_heater_on: bool = ...) -> None: ...
+    __slots__ = ("upper_pv_heater_on", "lower_pv_heater_on")
+    UPPER_PV_HEATER_ON_FIELD_NUMBER: _ClassVar[int]
+    LOWER_PV_HEATER_ON_FIELD_NUMBER: _ClassVar[int]
+    upper_pv_heater_on: bool
+    lower_pv_heater_on: bool
+    def __init__(self, upper_pv_heater_on: bool = ..., lower_pv_heater_on: bool = ...) -> None: ...
 
 class FsbPressure(_message.Message):
     __slots__ = ("pt1_pressure", "pt2_pressure", "pt3_pressure", "pt4_pressure")

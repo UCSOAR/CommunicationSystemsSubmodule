@@ -9,10 +9,10 @@ class Node(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     NODE_INVALID: _ClassVar[Node]
     NODE_UNKNOWN: _ClassVar[Node]
     NODE_ANY: _ClassVar[Node]
-    NODE_RCU: _ClassVar[Node]
-    NODE_DMB: _ClassVar[Node]
+    NODE_FSB: _ClassVar[Node]
+    NODE_FCB: _ClassVar[Node]
     NODE_PBB: _ClassVar[Node]
-    NODE_SOB: _ClassVar[Node]
+    NODE_LRB: _ClassVar[Node]
 
 class MessageID(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -41,10 +41,10 @@ class RocketState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
 NODE_INVALID: Node
 NODE_UNKNOWN: Node
 NODE_ANY: Node
-NODE_RCU: Node
-NODE_DMB: Node
+NODE_FSB: Node
+NODE_FCB: Node
 NODE_PBB: Node
-NODE_SOB: Node
+NODE_LRB: Node
 MSG_INVALID: MessageID
 MSG_UNKNOWN: MessageID
 MSG_CONTROL: MessageID

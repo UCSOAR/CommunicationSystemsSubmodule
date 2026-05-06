@@ -54,18 +54,20 @@ class FcbCommand final: public ::EmbeddedProto::MessageInterface
       RSC_ARM_CONFIRM_2 = 9,
       RSC_GOTO_ARM = 10,
       RSC_GOTO_PRELAUNCH = 11,
-      RSC_GOTO_IGNITION = 14,
-      RSC_IGNITION_TO_LAUNCH = 15,
-      RSC_LAUNCH_TO_BURN = 16,
-      RSC_BURN_TO_COAST = 17,
-      RSC_COAST_TO_DESCENT = 18,
-      RSC_DESCENT_TO_RECOVERY = 19,
-      RSC_MANUAL_IGNITION_CONFIRMED = 25,
-      RSC_GOTO_TEST = 20,
-      RSC_TEST_MEV_OPEN = 21,
-      RSC_TEST_MEV_ENABLE = 22,
-      RSC_TEST_MEV_DISABLE = 23,
-      RSC_NONE = 24
+      RSC_GOTO_IGNITION = 12,
+      RSC_IGNITION_TO_LAUNCH = 13,
+      RSC_LAUNCH_TO_BURN = 14,
+      RSC_BURN_TO_COAST = 15,
+      RSC_COAST_TO_BRAKING = 16,
+      RSC_COAST_TO_DESCENT = 17,
+      RSC_BRAKING_TO_DESCENT = 18,
+      RSC_DESCENT_TO_TOUCHDOWN = 19,
+      RSC_MANUAL_IGNITION_CONFIRMED = 20,
+      RSC_GOTO_TEST = 21,
+      RSC_TEST_MEV_OPEN = 22,
+      RSC_TEST_MEV_ENABLE = 23,
+      RSC_TEST_MEV_DISABLE = 24,
+      RSC_NONE = 25
     };
 
     enum class FieldNumber : uint32_t
@@ -547,11 +549,9 @@ class LrbCommand final: public ::EmbeddedProto::MessageInterface
     enum class Command : uint32_t
     {
       LRB_NONE = 0,
-      LRB_SLOW_SAMPLE_IR = 1,
-      LRB_FAST_SAMPLE_IR = 2,
-      LRB_TARE_LOAD_CELL = 3,
-      LRB_CALIBRATE_LOAD_CELL = 4,
-      LRB_LAST = 5
+      LRB_TARE_LOAD_CELL = 1,
+      LRB_CALIBRATE_LOAD_CELL = 2,
+      LRB_LAST = 3
     };
 
     enum class FieldNumber : uint32_t
@@ -790,7 +790,9 @@ class PbbCommand final: public ::EmbeddedProto::MessageInterface
       PBB_NONE = 0,
       PBB_OPEN_MEV = 1,
       PBB_CLOSE_MEV = 2,
-      PMB_LAST = 5
+      PBB_OPEN_DRAIN = 3,
+      PBB_CLOSE_DRAIN = 4,
+      PBB_LAST = 5
     };
 
     enum class FieldNumber : uint32_t

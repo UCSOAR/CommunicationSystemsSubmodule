@@ -732,268 +732,6 @@ class Battery final: public ::EmbeddedProto::MessageInterface
 
 };
 
-class CombustionControlStatus final: public ::EmbeddedProto::MessageInterface
-{
-  public:
-    CombustionControlStatus() = default;
-    CombustionControlStatus(const CombustionControlStatus& rhs )
-    {
-      set_vent_open(rhs.get_vent_open());
-      set_drain_open(rhs.get_drain_open());
-      set_mev_open(rhs.get_mev_open());
-    }
-
-    CombustionControlStatus(const CombustionControlStatus&& rhs ) noexcept
-    {
-      set_vent_open(rhs.get_vent_open());
-      set_drain_open(rhs.get_drain_open());
-      set_mev_open(rhs.get_mev_open());
-    }
-
-    ~CombustionControlStatus() override = default;
-
-    enum class FieldNumber : uint32_t
-    {
-      NOT_SET = 0,
-      VENT_OPEN = 1,
-      DRAIN_OPEN = 2,
-      MEV_OPEN = 3
-    };
-
-    CombustionControlStatus& operator=(const CombustionControlStatus& rhs)
-    {
-      set_vent_open(rhs.get_vent_open());
-      set_drain_open(rhs.get_drain_open());
-      set_mev_open(rhs.get_mev_open());
-      return *this;
-    }
-
-    CombustionControlStatus& operator=(const CombustionControlStatus&& rhs) noexcept
-    {
-      set_vent_open(rhs.get_vent_open());
-      set_drain_open(rhs.get_drain_open());
-      set_mev_open(rhs.get_mev_open());
-      return *this;
-    }
-
-    static constexpr char const* VENT_OPEN_NAME = "vent_open";
-    inline void clear_vent_open() { vent_open_.clear(); }
-    inline void set_vent_open(const bool& value) { vent_open_ = value; }
-    inline void set_vent_open(const bool&& value) { vent_open_ = value; }
-    inline bool& mutable_vent_open() { return vent_open_.get(); }
-    inline const bool& get_vent_open() const { return vent_open_.get(); }
-    inline bool vent_open() const { return vent_open_.get(); }
-
-    static constexpr char const* DRAIN_OPEN_NAME = "drain_open";
-    inline void clear_drain_open() { drain_open_.clear(); }
-    inline void set_drain_open(const bool& value) { drain_open_ = value; }
-    inline void set_drain_open(const bool&& value) { drain_open_ = value; }
-    inline bool& mutable_drain_open() { return drain_open_.get(); }
-    inline const bool& get_drain_open() const { return drain_open_.get(); }
-    inline bool drain_open() const { return drain_open_.get(); }
-
-    static constexpr char const* MEV_OPEN_NAME = "mev_open";
-    inline void clear_mev_open() { mev_open_.clear(); }
-    inline void set_mev_open(const bool& value) { mev_open_ = value; }
-    inline void set_mev_open(const bool&& value) { mev_open_ = value; }
-    inline bool& mutable_mev_open() { return mev_open_.get(); }
-    inline const bool& get_mev_open() const { return mev_open_.get(); }
-    inline bool mev_open() const { return mev_open_.get(); }
-
-
-    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
-    {
-      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
-
-      if((false != vent_open_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = vent_open_.serialize_with_id(static_cast<uint32_t>(FieldNumber::VENT_OPEN), buffer, false);
-      }
-
-      if((false != drain_open_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = drain_open_.serialize_with_id(static_cast<uint32_t>(FieldNumber::DRAIN_OPEN), buffer, false);
-      }
-
-      if((false != mev_open_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = mev_open_.serialize_with_id(static_cast<uint32_t>(FieldNumber::MEV_OPEN), buffer, false);
-      }
-
-      return return_value;
-    };
-
-    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
-    {
-      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
-      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
-      uint32_t id_number = 0;
-      FieldNumber id_tag = FieldNumber::NOT_SET;
-
-      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
-      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
-      {
-        id_tag = static_cast<FieldNumber>(id_number);
-        switch(id_tag)
-        {
-          case FieldNumber::VENT_OPEN:
-            return_value = vent_open_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case FieldNumber::DRAIN_OPEN:
-            return_value = drain_open_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case FieldNumber::MEV_OPEN:
-            return_value = mev_open_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case FieldNumber::NOT_SET:
-            return_value = ::EmbeddedProto::Error::INVALID_FIELD_ID;
-            break;
-
-          default:
-            return_value = skip_unknown_field(buffer, wire_type);
-            break;
-        }
-
-        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
-        {
-          // Read the next tag.
-          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
-        }
-      }
-
-      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
-      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
-         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
-         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
-      {
-        return_value = tag_value;
-      }
-
-      return return_value;
-    };
-
-    void clear() override
-    {
-      clear_vent_open();
-      clear_drain_open();
-      clear_mev_open();
-
-    }
-
-#ifndef DISABLE_FIELD_NUMBER_TO_NAME 
-
-    static char const* field_number_to_name(const FieldNumber fieldNumber)
-    {
-      char const* name = nullptr;
-      switch(fieldNumber)
-      {
-        case FieldNumber::VENT_OPEN:
-          name = VENT_OPEN_NAME;
-          break;
-        case FieldNumber::DRAIN_OPEN:
-          name = DRAIN_OPEN_NAME;
-          break;
-        case FieldNumber::MEV_OPEN:
-          name = MEV_OPEN_NAME;
-          break;
-        default:
-          name = "Invalid FieldNumber";
-          break;
-      }
-      return name;
-    }
-
-#endif
-
-#ifdef MSG_TO_STRING
-
-    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str) const
-    {
-      return this->to_string(str, 0, nullptr, true);
-    }
-
-    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str, const uint32_t indent_level, char const* name, const bool first_field) const override
-    {
-      ::EmbeddedProto::string_view left_chars = str;
-      int32_t n_chars_used = 0;
-
-      if(!first_field)
-      {
-        // Add a comma behind the previous field.
-        n_chars_used = snprintf(left_chars.data, left_chars.size, ",\n");
-        if(0 < n_chars_used)
-        {
-          // Update the character pointer and characters left in the array.
-          left_chars.data += n_chars_used;
-          left_chars.size -= n_chars_used;
-        }
-      }
-
-      if(nullptr != name)
-      {
-        if( 0 == indent_level)
-        {
-          n_chars_used = snprintf(left_chars.data, left_chars.size, "\"%s\": {\n", name);
-        }
-        else
-        {
-          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s\"%s\": {\n", indent_level, " ", name);
-        }
-      }
-      else
-      {
-        if( 0 == indent_level)
-        {
-          n_chars_used = snprintf(left_chars.data, left_chars.size, "{\n");
-        }
-        else
-        {
-          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s{\n", indent_level, " ");
-        }
-      }
-      
-      if(0 < n_chars_used)
-      {
-        left_chars.data += n_chars_used;
-        left_chars.size -= n_chars_used;
-      }
-
-      left_chars = vent_open_.to_string(left_chars, indent_level + 2, VENT_OPEN_NAME, true);
-      left_chars = drain_open_.to_string(left_chars, indent_level + 2, DRAIN_OPEN_NAME, false);
-      left_chars = mev_open_.to_string(left_chars, indent_level + 2, MEV_OPEN_NAME, false);
-  
-      if( 0 == indent_level) 
-      {
-        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n}");
-      }
-      else 
-      {
-        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n%*s}", indent_level, " ");
-      }
-
-      if(0 < n_chars_used)
-      {
-        left_chars.data += n_chars_used;
-        left_chars.size -= n_chars_used;
-      }
-
-      return left_chars;
-    }
-
-#endif // End of MSG_TO_STRING
-
-  private:
-
-
-      EmbeddedProto::boolean vent_open_ = false;
-      EmbeddedProto::boolean drain_open_ = false;
-      EmbeddedProto::boolean mev_open_ = false;
-
-};
-
 class CoordinateType final: public ::EmbeddedProto::MessageInterface
 {
   public:
@@ -1228,6 +966,212 @@ class CoordinateType final: public ::EmbeddedProto::MessageInterface
 
 };
 
+class FcbControlStatus final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    FcbControlStatus() = default;
+    FcbControlStatus(const FcbControlStatus& rhs )
+    {
+      set_vent_open(rhs.get_vent_open());
+    }
+
+    FcbControlStatus(const FcbControlStatus&& rhs ) noexcept
+    {
+      set_vent_open(rhs.get_vent_open());
+    }
+
+    ~FcbControlStatus() override = default;
+
+    enum class FieldNumber : uint32_t
+    {
+      NOT_SET = 0,
+      VENT_OPEN = 1
+    };
+
+    FcbControlStatus& operator=(const FcbControlStatus& rhs)
+    {
+      set_vent_open(rhs.get_vent_open());
+      return *this;
+    }
+
+    FcbControlStatus& operator=(const FcbControlStatus&& rhs) noexcept
+    {
+      set_vent_open(rhs.get_vent_open());
+      return *this;
+    }
+
+    static constexpr char const* VENT_OPEN_NAME = "vent_open";
+    inline void clear_vent_open() { vent_open_.clear(); }
+    inline void set_vent_open(const bool& value) { vent_open_ = value; }
+    inline void set_vent_open(const bool&& value) { vent_open_ = value; }
+    inline bool& mutable_vent_open() { return vent_open_.get(); }
+    inline const bool& get_vent_open() const { return vent_open_.get(); }
+    inline bool vent_open() const { return vent_open_.get(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((false != vent_open_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = vent_open_.serialize_with_id(static_cast<uint32_t>(FieldNumber::VENT_OPEN), buffer, false);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      FieldNumber id_tag = FieldNumber::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<FieldNumber>(id_number);
+        switch(id_tag)
+        {
+          case FieldNumber::VENT_OPEN:
+            return_value = vent_open_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case FieldNumber::NOT_SET:
+            return_value = ::EmbeddedProto::Error::INVALID_FIELD_ID;
+            break;
+
+          default:
+            return_value = skip_unknown_field(buffer, wire_type);
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_vent_open();
+
+    }
+
+#ifndef DISABLE_FIELD_NUMBER_TO_NAME 
+
+    static char const* field_number_to_name(const FieldNumber fieldNumber)
+    {
+      char const* name = nullptr;
+      switch(fieldNumber)
+      {
+        case FieldNumber::VENT_OPEN:
+          name = VENT_OPEN_NAME;
+          break;
+        default:
+          name = "Invalid FieldNumber";
+          break;
+      }
+      return name;
+    }
+
+#endif
+
+#ifdef MSG_TO_STRING
+
+    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str) const
+    {
+      return this->to_string(str, 0, nullptr, true);
+    }
+
+    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str, const uint32_t indent_level, char const* name, const bool first_field) const override
+    {
+      ::EmbeddedProto::string_view left_chars = str;
+      int32_t n_chars_used = 0;
+
+      if(!first_field)
+      {
+        // Add a comma behind the previous field.
+        n_chars_used = snprintf(left_chars.data, left_chars.size, ",\n");
+        if(0 < n_chars_used)
+        {
+          // Update the character pointer and characters left in the array.
+          left_chars.data += n_chars_used;
+          left_chars.size -= n_chars_used;
+        }
+      }
+
+      if(nullptr != name)
+      {
+        if( 0 == indent_level)
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "\"%s\": {\n", name);
+        }
+        else
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s\"%s\": {\n", indent_level, " ", name);
+        }
+      }
+      else
+      {
+        if( 0 == indent_level)
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "{\n");
+        }
+        else
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s{\n", indent_level, " ");
+        }
+      }
+      
+      if(0 < n_chars_used)
+      {
+        left_chars.data += n_chars_used;
+        left_chars.size -= n_chars_used;
+      }
+
+      left_chars = vent_open_.to_string(left_chars, indent_level + 2, VENT_OPEN_NAME, true);
+  
+      if( 0 == indent_level) 
+      {
+        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n}");
+      }
+      else 
+      {
+        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n%*s}", indent_level, " ");
+      }
+
+      if(0 < n_chars_used)
+      {
+        left_chars.data += n_chars_used;
+        left_chars.size -= n_chars_used;
+      }
+
+      return left_chars;
+    }
+
+#endif // End of MSG_TO_STRING
+
+  private:
+
+
+      EmbeddedProto::boolean vent_open_ = false;
+
+};
+
 class FcbPressure final: public ::EmbeddedProto::MessageInterface
 {
   public:
@@ -1431,6 +1375,268 @@ class FcbPressure final: public ::EmbeddedProto::MessageInterface
 
 
       EmbeddedProto::int32 upper_pv_pressure_ = 0;
+
+};
+
+class FcbTemperature final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    FcbTemperature() = default;
+    FcbTemperature(const FcbTemperature& rhs )
+    {
+      set_upper_pv_tc(rhs.get_upper_pv_tc());
+      set_vent_solenoid_tc(rhs.get_vent_solenoid_tc());
+      set_dip_tube_tc(rhs.get_dip_tube_tc());
+    }
+
+    FcbTemperature(const FcbTemperature&& rhs ) noexcept
+    {
+      set_upper_pv_tc(rhs.get_upper_pv_tc());
+      set_vent_solenoid_tc(rhs.get_vent_solenoid_tc());
+      set_dip_tube_tc(rhs.get_dip_tube_tc());
+    }
+
+    ~FcbTemperature() override = default;
+
+    enum class FieldNumber : uint32_t
+    {
+      NOT_SET = 0,
+      UPPER_PV_TC = 1,
+      VENT_SOLENOID_TC = 2,
+      DIP_TUBE_TC = 3
+    };
+
+    FcbTemperature& operator=(const FcbTemperature& rhs)
+    {
+      set_upper_pv_tc(rhs.get_upper_pv_tc());
+      set_vent_solenoid_tc(rhs.get_vent_solenoid_tc());
+      set_dip_tube_tc(rhs.get_dip_tube_tc());
+      return *this;
+    }
+
+    FcbTemperature& operator=(const FcbTemperature&& rhs) noexcept
+    {
+      set_upper_pv_tc(rhs.get_upper_pv_tc());
+      set_vent_solenoid_tc(rhs.get_vent_solenoid_tc());
+      set_dip_tube_tc(rhs.get_dip_tube_tc());
+      return *this;
+    }
+
+    static constexpr char const* UPPER_PV_TC_NAME = "upper_pv_tc";
+    inline void clear_upper_pv_tc() { upper_pv_tc_.clear(); }
+    inline void set_upper_pv_tc(const int32_t& value) { upper_pv_tc_ = value; }
+    inline void set_upper_pv_tc(const int32_t&& value) { upper_pv_tc_ = value; }
+    inline int32_t& mutable_upper_pv_tc() { return upper_pv_tc_.get(); }
+    inline const int32_t& get_upper_pv_tc() const { return upper_pv_tc_.get(); }
+    inline int32_t upper_pv_tc() const { return upper_pv_tc_.get(); }
+
+    static constexpr char const* VENT_SOLENOID_TC_NAME = "vent_solenoid_tc";
+    inline void clear_vent_solenoid_tc() { vent_solenoid_tc_.clear(); }
+    inline void set_vent_solenoid_tc(const int32_t& value) { vent_solenoid_tc_ = value; }
+    inline void set_vent_solenoid_tc(const int32_t&& value) { vent_solenoid_tc_ = value; }
+    inline int32_t& mutable_vent_solenoid_tc() { return vent_solenoid_tc_.get(); }
+    inline const int32_t& get_vent_solenoid_tc() const { return vent_solenoid_tc_.get(); }
+    inline int32_t vent_solenoid_tc() const { return vent_solenoid_tc_.get(); }
+
+    static constexpr char const* DIP_TUBE_TC_NAME = "dip_tube_tc";
+    inline void clear_dip_tube_tc() { dip_tube_tc_.clear(); }
+    inline void set_dip_tube_tc(const int32_t& value) { dip_tube_tc_ = value; }
+    inline void set_dip_tube_tc(const int32_t&& value) { dip_tube_tc_ = value; }
+    inline int32_t& mutable_dip_tube_tc() { return dip_tube_tc_.get(); }
+    inline const int32_t& get_dip_tube_tc() const { return dip_tube_tc_.get(); }
+    inline int32_t dip_tube_tc() const { return dip_tube_tc_.get(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((0 != upper_pv_tc_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = upper_pv_tc_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_TC), buffer, false);
+      }
+
+      if((0 != vent_solenoid_tc_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = vent_solenoid_tc_.serialize_with_id(static_cast<uint32_t>(FieldNumber::VENT_SOLENOID_TC), buffer, false);
+      }
+
+      if((0 != dip_tube_tc_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = dip_tube_tc_.serialize_with_id(static_cast<uint32_t>(FieldNumber::DIP_TUBE_TC), buffer, false);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      FieldNumber id_tag = FieldNumber::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<FieldNumber>(id_number);
+        switch(id_tag)
+        {
+          case FieldNumber::UPPER_PV_TC:
+            return_value = upper_pv_tc_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case FieldNumber::VENT_SOLENOID_TC:
+            return_value = vent_solenoid_tc_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case FieldNumber::DIP_TUBE_TC:
+            return_value = dip_tube_tc_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case FieldNumber::NOT_SET:
+            return_value = ::EmbeddedProto::Error::INVALID_FIELD_ID;
+            break;
+
+          default:
+            return_value = skip_unknown_field(buffer, wire_type);
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_upper_pv_tc();
+      clear_vent_solenoid_tc();
+      clear_dip_tube_tc();
+
+    }
+
+#ifndef DISABLE_FIELD_NUMBER_TO_NAME 
+
+    static char const* field_number_to_name(const FieldNumber fieldNumber)
+    {
+      char const* name = nullptr;
+      switch(fieldNumber)
+      {
+        case FieldNumber::UPPER_PV_TC:
+          name = UPPER_PV_TC_NAME;
+          break;
+        case FieldNumber::VENT_SOLENOID_TC:
+          name = VENT_SOLENOID_TC_NAME;
+          break;
+        case FieldNumber::DIP_TUBE_TC:
+          name = DIP_TUBE_TC_NAME;
+          break;
+        default:
+          name = "Invalid FieldNumber";
+          break;
+      }
+      return name;
+    }
+
+#endif
+
+#ifdef MSG_TO_STRING
+
+    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str) const
+    {
+      return this->to_string(str, 0, nullptr, true);
+    }
+
+    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str, const uint32_t indent_level, char const* name, const bool first_field) const override
+    {
+      ::EmbeddedProto::string_view left_chars = str;
+      int32_t n_chars_used = 0;
+
+      if(!first_field)
+      {
+        // Add a comma behind the previous field.
+        n_chars_used = snprintf(left_chars.data, left_chars.size, ",\n");
+        if(0 < n_chars_used)
+        {
+          // Update the character pointer and characters left in the array.
+          left_chars.data += n_chars_used;
+          left_chars.size -= n_chars_used;
+        }
+      }
+
+      if(nullptr != name)
+      {
+        if( 0 == indent_level)
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "\"%s\": {\n", name);
+        }
+        else
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s\"%s\": {\n", indent_level, " ", name);
+        }
+      }
+      else
+      {
+        if( 0 == indent_level)
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "{\n");
+        }
+        else
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s{\n", indent_level, " ");
+        }
+      }
+      
+      if(0 < n_chars_used)
+      {
+        left_chars.data += n_chars_used;
+        left_chars.size -= n_chars_used;
+      }
+
+      left_chars = upper_pv_tc_.to_string(left_chars, indent_level + 2, UPPER_PV_TC_NAME, true);
+      left_chars = vent_solenoid_tc_.to_string(left_chars, indent_level + 2, VENT_SOLENOID_TC_NAME, false);
+      left_chars = dip_tube_tc_.to_string(left_chars, indent_level + 2, DIP_TUBE_TC_NAME, false);
+  
+      if( 0 == indent_level) 
+      {
+        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n}");
+      }
+      else 
+      {
+        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n%*s}", indent_level, " ");
+      }
+
+      if(0 < n_chars_used)
+      {
+        left_chars.data += n_chars_used;
+        left_chars.size -= n_chars_used;
+      }
+
+      return left_chars;
+    }
+
+#endif // End of MSG_TO_STRING
+
+  private:
+
+
+      EmbeddedProto::int32 upper_pv_tc_ = 0;
+      EmbeddedProto::int32 vent_solenoid_tc_ = 0;
+      EmbeddedProto::int32 dip_tube_tc_ = 0;
 
 };
 
@@ -2198,14 +2404,14 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
     HeaterStatus() = default;
     HeaterStatus(const HeaterStatus& rhs )
     {
-      set_upper_pv_tc2_heater_on(rhs.get_upper_pv_tc2_heater_on());
-      set_lower_pv_tc2_heater_on(rhs.get_lower_pv_tc2_heater_on());
+      set_upper_pv_heater_on(rhs.get_upper_pv_heater_on());
+      set_lower_pv_heater_on(rhs.get_lower_pv_heater_on());
     }
 
     HeaterStatus(const HeaterStatus&& rhs ) noexcept
     {
-      set_upper_pv_tc2_heater_on(rhs.get_upper_pv_tc2_heater_on());
-      set_lower_pv_tc2_heater_on(rhs.get_lower_pv_tc2_heater_on());
+      set_upper_pv_heater_on(rhs.get_upper_pv_heater_on());
+      set_lower_pv_heater_on(rhs.get_lower_pv_heater_on());
     }
 
     ~HeaterStatus() override = default;
@@ -2213,53 +2419,53 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
     enum class FieldNumber : uint32_t
     {
       NOT_SET = 0,
-      UPPER_PV_TC2_HEATER_ON = 1,
-      LOWER_PV_TC2_HEATER_ON = 2
+      UPPER_PV_HEATER_ON = 1,
+      LOWER_PV_HEATER_ON = 2
     };
 
     HeaterStatus& operator=(const HeaterStatus& rhs)
     {
-      set_upper_pv_tc2_heater_on(rhs.get_upper_pv_tc2_heater_on());
-      set_lower_pv_tc2_heater_on(rhs.get_lower_pv_tc2_heater_on());
+      set_upper_pv_heater_on(rhs.get_upper_pv_heater_on());
+      set_lower_pv_heater_on(rhs.get_lower_pv_heater_on());
       return *this;
     }
 
     HeaterStatus& operator=(const HeaterStatus&& rhs) noexcept
     {
-      set_upper_pv_tc2_heater_on(rhs.get_upper_pv_tc2_heater_on());
-      set_lower_pv_tc2_heater_on(rhs.get_lower_pv_tc2_heater_on());
+      set_upper_pv_heater_on(rhs.get_upper_pv_heater_on());
+      set_lower_pv_heater_on(rhs.get_lower_pv_heater_on());
       return *this;
     }
 
-    static constexpr char const* UPPER_PV_TC2_HEATER_ON_NAME = "upper_pv_tc2_heater_on";
-    inline void clear_upper_pv_tc2_heater_on() { upper_pv_tc2_heater_on_.clear(); }
-    inline void set_upper_pv_tc2_heater_on(const bool& value) { upper_pv_tc2_heater_on_ = value; }
-    inline void set_upper_pv_tc2_heater_on(const bool&& value) { upper_pv_tc2_heater_on_ = value; }
-    inline bool& mutable_upper_pv_tc2_heater_on() { return upper_pv_tc2_heater_on_.get(); }
-    inline const bool& get_upper_pv_tc2_heater_on() const { return upper_pv_tc2_heater_on_.get(); }
-    inline bool upper_pv_tc2_heater_on() const { return upper_pv_tc2_heater_on_.get(); }
+    static constexpr char const* UPPER_PV_HEATER_ON_NAME = "upper_pv_heater_on";
+    inline void clear_upper_pv_heater_on() { upper_pv_heater_on_.clear(); }
+    inline void set_upper_pv_heater_on(const bool& value) { upper_pv_heater_on_ = value; }
+    inline void set_upper_pv_heater_on(const bool&& value) { upper_pv_heater_on_ = value; }
+    inline bool& mutable_upper_pv_heater_on() { return upper_pv_heater_on_.get(); }
+    inline const bool& get_upper_pv_heater_on() const { return upper_pv_heater_on_.get(); }
+    inline bool upper_pv_heater_on() const { return upper_pv_heater_on_.get(); }
 
-    static constexpr char const* LOWER_PV_TC2_HEATER_ON_NAME = "lower_pv_tc2_heater_on";
-    inline void clear_lower_pv_tc2_heater_on() { lower_pv_tc2_heater_on_.clear(); }
-    inline void set_lower_pv_tc2_heater_on(const bool& value) { lower_pv_tc2_heater_on_ = value; }
-    inline void set_lower_pv_tc2_heater_on(const bool&& value) { lower_pv_tc2_heater_on_ = value; }
-    inline bool& mutable_lower_pv_tc2_heater_on() { return lower_pv_tc2_heater_on_.get(); }
-    inline const bool& get_lower_pv_tc2_heater_on() const { return lower_pv_tc2_heater_on_.get(); }
-    inline bool lower_pv_tc2_heater_on() const { return lower_pv_tc2_heater_on_.get(); }
+    static constexpr char const* LOWER_PV_HEATER_ON_NAME = "lower_pv_heater_on";
+    inline void clear_lower_pv_heater_on() { lower_pv_heater_on_.clear(); }
+    inline void set_lower_pv_heater_on(const bool& value) { lower_pv_heater_on_ = value; }
+    inline void set_lower_pv_heater_on(const bool&& value) { lower_pv_heater_on_ = value; }
+    inline bool& mutable_lower_pv_heater_on() { return lower_pv_heater_on_.get(); }
+    inline const bool& get_lower_pv_heater_on() const { return lower_pv_heater_on_.get(); }
+    inline bool lower_pv_heater_on() const { return lower_pv_heater_on_.get(); }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
       ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
 
-      if((false != upper_pv_tc2_heater_on_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      if((false != upper_pv_heater_on_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
-        return_value = upper_pv_tc2_heater_on_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_TC2_HEATER_ON), buffer, false);
+        return_value = upper_pv_heater_on_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_HEATER_ON), buffer, false);
       }
 
-      if((false != lower_pv_tc2_heater_on_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      if((false != lower_pv_heater_on_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
-        return_value = lower_pv_tc2_heater_on_.serialize_with_id(static_cast<uint32_t>(FieldNumber::LOWER_PV_TC2_HEATER_ON), buffer, false);
+        return_value = lower_pv_heater_on_.serialize_with_id(static_cast<uint32_t>(FieldNumber::LOWER_PV_HEATER_ON), buffer, false);
       }
 
       return return_value;
@@ -2278,12 +2484,12 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
         id_tag = static_cast<FieldNumber>(id_number);
         switch(id_tag)
         {
-          case FieldNumber::UPPER_PV_TC2_HEATER_ON:
-            return_value = upper_pv_tc2_heater_on_.deserialize_check_type(buffer, wire_type);
+          case FieldNumber::UPPER_PV_HEATER_ON:
+            return_value = upper_pv_heater_on_.deserialize_check_type(buffer, wire_type);
             break;
 
-          case FieldNumber::LOWER_PV_TC2_HEATER_ON:
-            return_value = lower_pv_tc2_heater_on_.deserialize_check_type(buffer, wire_type);
+          case FieldNumber::LOWER_PV_HEATER_ON:
+            return_value = lower_pv_heater_on_.deserialize_check_type(buffer, wire_type);
             break;
 
           case FieldNumber::NOT_SET:
@@ -2315,8 +2521,8 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
 
     void clear() override
     {
-      clear_upper_pv_tc2_heater_on();
-      clear_lower_pv_tc2_heater_on();
+      clear_upper_pv_heater_on();
+      clear_lower_pv_heater_on();
 
     }
 
@@ -2327,11 +2533,11 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
       char const* name = nullptr;
       switch(fieldNumber)
       {
-        case FieldNumber::UPPER_PV_TC2_HEATER_ON:
-          name = UPPER_PV_TC2_HEATER_ON_NAME;
+        case FieldNumber::UPPER_PV_HEATER_ON:
+          name = UPPER_PV_HEATER_ON_NAME;
           break;
-        case FieldNumber::LOWER_PV_TC2_HEATER_ON:
-          name = LOWER_PV_TC2_HEATER_ON_NAME;
+        case FieldNumber::LOWER_PV_HEATER_ON:
+          name = LOWER_PV_HEATER_ON_NAME;
           break;
         default:
           name = "Invalid FieldNumber";
@@ -2395,8 +2601,8 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
         left_chars.size -= n_chars_used;
       }
 
-      left_chars = upper_pv_tc2_heater_on_.to_string(left_chars, indent_level + 2, UPPER_PV_TC2_HEATER_ON_NAME, true);
-      left_chars = lower_pv_tc2_heater_on_.to_string(left_chars, indent_level + 2, LOWER_PV_TC2_HEATER_ON_NAME, false);
+      left_chars = upper_pv_heater_on_.to_string(left_chars, indent_level + 2, UPPER_PV_HEATER_ON_NAME, true);
+      left_chars = lower_pv_heater_on_.to_string(left_chars, indent_level + 2, LOWER_PV_HEATER_ON_NAME, false);
   
       if( 0 == indent_level) 
       {
@@ -2421,8 +2627,8 @@ class HeaterStatus final: public ::EmbeddedProto::MessageInterface
   private:
 
 
-      EmbeddedProto::boolean upper_pv_tc2_heater_on_ = false;
-      EmbeddedProto::boolean lower_pv_tc2_heater_on_ = false;
+      EmbeddedProto::boolean upper_pv_heater_on_ = false;
+      EmbeddedProto::boolean lower_pv_heater_on_ = false;
 
 };
 
@@ -3820,6 +4026,240 @@ class PadBoxStatus final: public ::EmbeddedProto::MessageInterface
 
 };
 
+class PbbControlStatus final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    PbbControlStatus() = default;
+    PbbControlStatus(const PbbControlStatus& rhs )
+    {
+      set_drain_open(rhs.get_drain_open());
+      set_mev_open(rhs.get_mev_open());
+    }
+
+    PbbControlStatus(const PbbControlStatus&& rhs ) noexcept
+    {
+      set_drain_open(rhs.get_drain_open());
+      set_mev_open(rhs.get_mev_open());
+    }
+
+    ~PbbControlStatus() override = default;
+
+    enum class FieldNumber : uint32_t
+    {
+      NOT_SET = 0,
+      DRAIN_OPEN = 1,
+      MEV_OPEN = 2
+    };
+
+    PbbControlStatus& operator=(const PbbControlStatus& rhs)
+    {
+      set_drain_open(rhs.get_drain_open());
+      set_mev_open(rhs.get_mev_open());
+      return *this;
+    }
+
+    PbbControlStatus& operator=(const PbbControlStatus&& rhs) noexcept
+    {
+      set_drain_open(rhs.get_drain_open());
+      set_mev_open(rhs.get_mev_open());
+      return *this;
+    }
+
+    static constexpr char const* DRAIN_OPEN_NAME = "drain_open";
+    inline void clear_drain_open() { drain_open_.clear(); }
+    inline void set_drain_open(const bool& value) { drain_open_ = value; }
+    inline void set_drain_open(const bool&& value) { drain_open_ = value; }
+    inline bool& mutable_drain_open() { return drain_open_.get(); }
+    inline const bool& get_drain_open() const { return drain_open_.get(); }
+    inline bool drain_open() const { return drain_open_.get(); }
+
+    static constexpr char const* MEV_OPEN_NAME = "mev_open";
+    inline void clear_mev_open() { mev_open_.clear(); }
+    inline void set_mev_open(const bool& value) { mev_open_ = value; }
+    inline void set_mev_open(const bool&& value) { mev_open_ = value; }
+    inline bool& mutable_mev_open() { return mev_open_.get(); }
+    inline const bool& get_mev_open() const { return mev_open_.get(); }
+    inline bool mev_open() const { return mev_open_.get(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((false != drain_open_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = drain_open_.serialize_with_id(static_cast<uint32_t>(FieldNumber::DRAIN_OPEN), buffer, false);
+      }
+
+      if((false != mev_open_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = mev_open_.serialize_with_id(static_cast<uint32_t>(FieldNumber::MEV_OPEN), buffer, false);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      FieldNumber id_tag = FieldNumber::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<FieldNumber>(id_number);
+        switch(id_tag)
+        {
+          case FieldNumber::DRAIN_OPEN:
+            return_value = drain_open_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case FieldNumber::MEV_OPEN:
+            return_value = mev_open_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case FieldNumber::NOT_SET:
+            return_value = ::EmbeddedProto::Error::INVALID_FIELD_ID;
+            break;
+
+          default:
+            return_value = skip_unknown_field(buffer, wire_type);
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_drain_open();
+      clear_mev_open();
+
+    }
+
+#ifndef DISABLE_FIELD_NUMBER_TO_NAME 
+
+    static char const* field_number_to_name(const FieldNumber fieldNumber)
+    {
+      char const* name = nullptr;
+      switch(fieldNumber)
+      {
+        case FieldNumber::DRAIN_OPEN:
+          name = DRAIN_OPEN_NAME;
+          break;
+        case FieldNumber::MEV_OPEN:
+          name = MEV_OPEN_NAME;
+          break;
+        default:
+          name = "Invalid FieldNumber";
+          break;
+      }
+      return name;
+    }
+
+#endif
+
+#ifdef MSG_TO_STRING
+
+    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str) const
+    {
+      return this->to_string(str, 0, nullptr, true);
+    }
+
+    ::EmbeddedProto::string_view to_string(::EmbeddedProto::string_view& str, const uint32_t indent_level, char const* name, const bool first_field) const override
+    {
+      ::EmbeddedProto::string_view left_chars = str;
+      int32_t n_chars_used = 0;
+
+      if(!first_field)
+      {
+        // Add a comma behind the previous field.
+        n_chars_used = snprintf(left_chars.data, left_chars.size, ",\n");
+        if(0 < n_chars_used)
+        {
+          // Update the character pointer and characters left in the array.
+          left_chars.data += n_chars_used;
+          left_chars.size -= n_chars_used;
+        }
+      }
+
+      if(nullptr != name)
+      {
+        if( 0 == indent_level)
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "\"%s\": {\n", name);
+        }
+        else
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s\"%s\": {\n", indent_level, " ", name);
+        }
+      }
+      else
+      {
+        if( 0 == indent_level)
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "{\n");
+        }
+        else
+        {
+          n_chars_used = snprintf(left_chars.data, left_chars.size, "%*s{\n", indent_level, " ");
+        }
+      }
+      
+      if(0 < n_chars_used)
+      {
+        left_chars.data += n_chars_used;
+        left_chars.size -= n_chars_used;
+      }
+
+      left_chars = drain_open_.to_string(left_chars, indent_level + 2, DRAIN_OPEN_NAME, true);
+      left_chars = mev_open_.to_string(left_chars, indent_level + 2, MEV_OPEN_NAME, false);
+  
+      if( 0 == indent_level) 
+      {
+        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n}");
+      }
+      else 
+      {
+        n_chars_used = snprintf(left_chars.data, left_chars.size, "\n%*s}", indent_level, " ");
+      }
+
+      if(0 < n_chars_used)
+      {
+        left_chars.data += n_chars_used;
+        left_chars.size -= n_chars_used;
+      }
+
+      return left_chars;
+    }
+
+#endif // End of MSG_TO_STRING
+
+  private:
+
+
+      EmbeddedProto::boolean drain_open_ = false;
+      EmbeddedProto::boolean mev_open_ = false;
+
+};
+
 class PbbPressure final: public ::EmbeddedProto::MessageInterface
 {
   public:
@@ -3827,14 +4267,12 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
     PbbPressure(const PbbPressure& rhs )
     {
       set_ib_pressure(rhs.get_ib_pressure());
-      set_upper_pv_pressure(rhs.get_upper_pv_pressure());
       set_lower_pv_pressure(rhs.get_lower_pv_pressure());
     }
 
     PbbPressure(const PbbPressure&& rhs ) noexcept
     {
       set_ib_pressure(rhs.get_ib_pressure());
-      set_upper_pv_pressure(rhs.get_upper_pv_pressure());
       set_lower_pv_pressure(rhs.get_lower_pv_pressure());
     }
 
@@ -3844,14 +4282,12 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
     {
       NOT_SET = 0,
       IB_PRESSURE = 1,
-      UPPER_PV_PRESSURE = 2,
-      LOWER_PV_PRESSURE = 3
+      LOWER_PV_PRESSURE = 2
     };
 
     PbbPressure& operator=(const PbbPressure& rhs)
     {
       set_ib_pressure(rhs.get_ib_pressure());
-      set_upper_pv_pressure(rhs.get_upper_pv_pressure());
       set_lower_pv_pressure(rhs.get_lower_pv_pressure());
       return *this;
     }
@@ -3859,7 +4295,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
     PbbPressure& operator=(const PbbPressure&& rhs) noexcept
     {
       set_ib_pressure(rhs.get_ib_pressure());
-      set_upper_pv_pressure(rhs.get_upper_pv_pressure());
       set_lower_pv_pressure(rhs.get_lower_pv_pressure());
       return *this;
     }
@@ -3871,14 +4306,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
     inline int32_t& mutable_ib_pressure() { return ib_pressure_.get(); }
     inline const int32_t& get_ib_pressure() const { return ib_pressure_.get(); }
     inline int32_t ib_pressure() const { return ib_pressure_.get(); }
-
-    static constexpr char const* UPPER_PV_PRESSURE_NAME = "upper_pv_pressure";
-    inline void clear_upper_pv_pressure() { upper_pv_pressure_.clear(); }
-    inline void set_upper_pv_pressure(const int32_t& value) { upper_pv_pressure_ = value; }
-    inline void set_upper_pv_pressure(const int32_t&& value) { upper_pv_pressure_ = value; }
-    inline int32_t& mutable_upper_pv_pressure() { return upper_pv_pressure_.get(); }
-    inline const int32_t& get_upper_pv_pressure() const { return upper_pv_pressure_.get(); }
-    inline int32_t upper_pv_pressure() const { return upper_pv_pressure_.get(); }
 
     static constexpr char const* LOWER_PV_PRESSURE_NAME = "lower_pv_pressure";
     inline void clear_lower_pv_pressure() { lower_pv_pressure_.clear(); }
@@ -3896,11 +4323,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
       if((0 != ib_pressure_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = ib_pressure_.serialize_with_id(static_cast<uint32_t>(FieldNumber::IB_PRESSURE), buffer, false);
-      }
-
-      if((0 != upper_pv_pressure_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = upper_pv_pressure_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_PRESSURE), buffer, false);
       }
 
       if((0 != lower_pv_pressure_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
@@ -3926,10 +4348,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
         {
           case FieldNumber::IB_PRESSURE:
             return_value = ib_pressure_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case FieldNumber::UPPER_PV_PRESSURE:
-            return_value = upper_pv_pressure_.deserialize_check_type(buffer, wire_type);
             break;
 
           case FieldNumber::LOWER_PV_PRESSURE:
@@ -3966,7 +4384,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
     void clear() override
     {
       clear_ib_pressure();
-      clear_upper_pv_pressure();
       clear_lower_pv_pressure();
 
     }
@@ -3980,9 +4397,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
       {
         case FieldNumber::IB_PRESSURE:
           name = IB_PRESSURE_NAME;
-          break;
-        case FieldNumber::UPPER_PV_PRESSURE:
-          name = UPPER_PV_PRESSURE_NAME;
           break;
         case FieldNumber::LOWER_PV_PRESSURE:
           name = LOWER_PV_PRESSURE_NAME;
@@ -4050,7 +4464,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
       }
 
       left_chars = ib_pressure_.to_string(left_chars, indent_level + 2, IB_PRESSURE_NAME, true);
-      left_chars = upper_pv_pressure_.to_string(left_chars, indent_level + 2, UPPER_PV_PRESSURE_NAME, false);
       left_chars = lower_pv_pressure_.to_string(left_chars, indent_level + 2, LOWER_PV_PRESSURE_NAME, false);
   
       if( 0 == indent_level) 
@@ -4077,7 +4490,6 @@ class PbbPressure final: public ::EmbeddedProto::MessageInterface
 
 
       EmbeddedProto::int32 ib_pressure_ = 0;
-      EmbeddedProto::int32 upper_pv_pressure_ = 0;
       EmbeddedProto::int32 lower_pv_pressure_ = 0;
 
 };
@@ -4089,21 +4501,15 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
     PbbTemperature(const PbbTemperature& rhs )
     {
       set_ib_temperature(rhs.get_ib_temperature());
-      set_upper_pv_tc1(rhs.get_upper_pv_tc1());
-      set_upper_pv_tc2(rhs.get_upper_pv_tc2());
-      set_upper_pv_tc3(rhs.get_upper_pv_tc3());
       set_lower_pv_tc1(rhs.get_lower_pv_tc1());
-      set_lower_pv_tc2(rhs.get_lower_pv_tc2());
+      set_low_solenoid_heater_tc(rhs.get_low_solenoid_heater_tc());
     }
 
     PbbTemperature(const PbbTemperature&& rhs ) noexcept
     {
       set_ib_temperature(rhs.get_ib_temperature());
-      set_upper_pv_tc1(rhs.get_upper_pv_tc1());
-      set_upper_pv_tc2(rhs.get_upper_pv_tc2());
-      set_upper_pv_tc3(rhs.get_upper_pv_tc3());
       set_lower_pv_tc1(rhs.get_lower_pv_tc1());
-      set_lower_pv_tc2(rhs.get_lower_pv_tc2());
+      set_low_solenoid_heater_tc(rhs.get_low_solenoid_heater_tc());
     }
 
     ~PbbTemperature() override = default;
@@ -4112,32 +4518,23 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
     {
       NOT_SET = 0,
       IB_TEMPERATURE = 1,
-      UPPER_PV_TC1 = 2,
-      UPPER_PV_TC2 = 3,
-      UPPER_PV_TC3 = 4,
-      LOWER_PV_TC1 = 5,
-      LOWER_PV_TC2 = 6
+      LOWER_PV_TC1 = 2,
+      LOW_SOLENOID_HEATER_TC = 3
     };
 
     PbbTemperature& operator=(const PbbTemperature& rhs)
     {
       set_ib_temperature(rhs.get_ib_temperature());
-      set_upper_pv_tc1(rhs.get_upper_pv_tc1());
-      set_upper_pv_tc2(rhs.get_upper_pv_tc2());
-      set_upper_pv_tc3(rhs.get_upper_pv_tc3());
       set_lower_pv_tc1(rhs.get_lower_pv_tc1());
-      set_lower_pv_tc2(rhs.get_lower_pv_tc2());
+      set_low_solenoid_heater_tc(rhs.get_low_solenoid_heater_tc());
       return *this;
     }
 
     PbbTemperature& operator=(const PbbTemperature&& rhs) noexcept
     {
       set_ib_temperature(rhs.get_ib_temperature());
-      set_upper_pv_tc1(rhs.get_upper_pv_tc1());
-      set_upper_pv_tc2(rhs.get_upper_pv_tc2());
-      set_upper_pv_tc3(rhs.get_upper_pv_tc3());
       set_lower_pv_tc1(rhs.get_lower_pv_tc1());
-      set_lower_pv_tc2(rhs.get_lower_pv_tc2());
+      set_low_solenoid_heater_tc(rhs.get_low_solenoid_heater_tc());
       return *this;
     }
 
@@ -4149,30 +4546,6 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
     inline const int32_t& get_ib_temperature() const { return ib_temperature_.get(); }
     inline int32_t ib_temperature() const { return ib_temperature_.get(); }
 
-    static constexpr char const* UPPER_PV_TC1_NAME = "upper_pv_tc1";
-    inline void clear_upper_pv_tc1() { upper_pv_tc1_.clear(); }
-    inline void set_upper_pv_tc1(const int32_t& value) { upper_pv_tc1_ = value; }
-    inline void set_upper_pv_tc1(const int32_t&& value) { upper_pv_tc1_ = value; }
-    inline int32_t& mutable_upper_pv_tc1() { return upper_pv_tc1_.get(); }
-    inline const int32_t& get_upper_pv_tc1() const { return upper_pv_tc1_.get(); }
-    inline int32_t upper_pv_tc1() const { return upper_pv_tc1_.get(); }
-
-    static constexpr char const* UPPER_PV_TC2_NAME = "upper_pv_tc2";
-    inline void clear_upper_pv_tc2() { upper_pv_tc2_.clear(); }
-    inline void set_upper_pv_tc2(const int32_t& value) { upper_pv_tc2_ = value; }
-    inline void set_upper_pv_tc2(const int32_t&& value) { upper_pv_tc2_ = value; }
-    inline int32_t& mutable_upper_pv_tc2() { return upper_pv_tc2_.get(); }
-    inline const int32_t& get_upper_pv_tc2() const { return upper_pv_tc2_.get(); }
-    inline int32_t upper_pv_tc2() const { return upper_pv_tc2_.get(); }
-
-    static constexpr char const* UPPER_PV_TC3_NAME = "upper_pv_tc3";
-    inline void clear_upper_pv_tc3() { upper_pv_tc3_.clear(); }
-    inline void set_upper_pv_tc3(const int32_t& value) { upper_pv_tc3_ = value; }
-    inline void set_upper_pv_tc3(const int32_t&& value) { upper_pv_tc3_ = value; }
-    inline int32_t& mutable_upper_pv_tc3() { return upper_pv_tc3_.get(); }
-    inline const int32_t& get_upper_pv_tc3() const { return upper_pv_tc3_.get(); }
-    inline int32_t upper_pv_tc3() const { return upper_pv_tc3_.get(); }
-
     static constexpr char const* LOWER_PV_TC1_NAME = "lower_pv_tc1";
     inline void clear_lower_pv_tc1() { lower_pv_tc1_.clear(); }
     inline void set_lower_pv_tc1(const int32_t& value) { lower_pv_tc1_ = value; }
@@ -4181,13 +4554,13 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
     inline const int32_t& get_lower_pv_tc1() const { return lower_pv_tc1_.get(); }
     inline int32_t lower_pv_tc1() const { return lower_pv_tc1_.get(); }
 
-    static constexpr char const* LOWER_PV_TC2_NAME = "lower_pv_tc2";
-    inline void clear_lower_pv_tc2() { lower_pv_tc2_.clear(); }
-    inline void set_lower_pv_tc2(const int32_t& value) { lower_pv_tc2_ = value; }
-    inline void set_lower_pv_tc2(const int32_t&& value) { lower_pv_tc2_ = value; }
-    inline int32_t& mutable_lower_pv_tc2() { return lower_pv_tc2_.get(); }
-    inline const int32_t& get_lower_pv_tc2() const { return lower_pv_tc2_.get(); }
-    inline int32_t lower_pv_tc2() const { return lower_pv_tc2_.get(); }
+    static constexpr char const* LOW_SOLENOID_HEATER_TC_NAME = "low_solenoid_heater_tc";
+    inline void clear_low_solenoid_heater_tc() { low_solenoid_heater_tc_.clear(); }
+    inline void set_low_solenoid_heater_tc(const int32_t& value) { low_solenoid_heater_tc_ = value; }
+    inline void set_low_solenoid_heater_tc(const int32_t&& value) { low_solenoid_heater_tc_ = value; }
+    inline int32_t& mutable_low_solenoid_heater_tc() { return low_solenoid_heater_tc_.get(); }
+    inline const int32_t& get_low_solenoid_heater_tc() const { return low_solenoid_heater_tc_.get(); }
+    inline int32_t low_solenoid_heater_tc() const { return low_solenoid_heater_tc_.get(); }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
@@ -4199,29 +4572,14 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
         return_value = ib_temperature_.serialize_with_id(static_cast<uint32_t>(FieldNumber::IB_TEMPERATURE), buffer, false);
       }
 
-      if((0 != upper_pv_tc1_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = upper_pv_tc1_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_TC1), buffer, false);
-      }
-
-      if((0 != upper_pv_tc2_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = upper_pv_tc2_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_TC2), buffer, false);
-      }
-
-      if((0 != upper_pv_tc3_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = upper_pv_tc3_.serialize_with_id(static_cast<uint32_t>(FieldNumber::UPPER_PV_TC3), buffer, false);
-      }
-
       if((0 != lower_pv_tc1_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = lower_pv_tc1_.serialize_with_id(static_cast<uint32_t>(FieldNumber::LOWER_PV_TC1), buffer, false);
       }
 
-      if((0 != lower_pv_tc2_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      if((0 != low_solenoid_heater_tc_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
-        return_value = lower_pv_tc2_.serialize_with_id(static_cast<uint32_t>(FieldNumber::LOWER_PV_TC2), buffer, false);
+        return_value = low_solenoid_heater_tc_.serialize_with_id(static_cast<uint32_t>(FieldNumber::LOW_SOLENOID_HEATER_TC), buffer, false);
       }
 
       return return_value;
@@ -4244,24 +4602,12 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
             return_value = ib_temperature_.deserialize_check_type(buffer, wire_type);
             break;
 
-          case FieldNumber::UPPER_PV_TC1:
-            return_value = upper_pv_tc1_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case FieldNumber::UPPER_PV_TC2:
-            return_value = upper_pv_tc2_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case FieldNumber::UPPER_PV_TC3:
-            return_value = upper_pv_tc3_.deserialize_check_type(buffer, wire_type);
-            break;
-
           case FieldNumber::LOWER_PV_TC1:
             return_value = lower_pv_tc1_.deserialize_check_type(buffer, wire_type);
             break;
 
-          case FieldNumber::LOWER_PV_TC2:
-            return_value = lower_pv_tc2_.deserialize_check_type(buffer, wire_type);
+          case FieldNumber::LOW_SOLENOID_HEATER_TC:
+            return_value = low_solenoid_heater_tc_.deserialize_check_type(buffer, wire_type);
             break;
 
           case FieldNumber::NOT_SET:
@@ -4294,11 +4640,8 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
     void clear() override
     {
       clear_ib_temperature();
-      clear_upper_pv_tc1();
-      clear_upper_pv_tc2();
-      clear_upper_pv_tc3();
       clear_lower_pv_tc1();
-      clear_lower_pv_tc2();
+      clear_low_solenoid_heater_tc();
 
     }
 
@@ -4312,20 +4655,11 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
         case FieldNumber::IB_TEMPERATURE:
           name = IB_TEMPERATURE_NAME;
           break;
-        case FieldNumber::UPPER_PV_TC1:
-          name = UPPER_PV_TC1_NAME;
-          break;
-        case FieldNumber::UPPER_PV_TC2:
-          name = UPPER_PV_TC2_NAME;
-          break;
-        case FieldNumber::UPPER_PV_TC3:
-          name = UPPER_PV_TC3_NAME;
-          break;
         case FieldNumber::LOWER_PV_TC1:
           name = LOWER_PV_TC1_NAME;
           break;
-        case FieldNumber::LOWER_PV_TC2:
-          name = LOWER_PV_TC2_NAME;
+        case FieldNumber::LOW_SOLENOID_HEATER_TC:
+          name = LOW_SOLENOID_HEATER_TC_NAME;
           break;
         default:
           name = "Invalid FieldNumber";
@@ -4390,11 +4724,8 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
       }
 
       left_chars = ib_temperature_.to_string(left_chars, indent_level + 2, IB_TEMPERATURE_NAME, true);
-      left_chars = upper_pv_tc1_.to_string(left_chars, indent_level + 2, UPPER_PV_TC1_NAME, false);
-      left_chars = upper_pv_tc2_.to_string(left_chars, indent_level + 2, UPPER_PV_TC2_NAME, false);
-      left_chars = upper_pv_tc3_.to_string(left_chars, indent_level + 2, UPPER_PV_TC3_NAME, false);
       left_chars = lower_pv_tc1_.to_string(left_chars, indent_level + 2, LOWER_PV_TC1_NAME, false);
-      left_chars = lower_pv_tc2_.to_string(left_chars, indent_level + 2, LOWER_PV_TC2_NAME, false);
+      left_chars = low_solenoid_heater_tc_.to_string(left_chars, indent_level + 2, LOW_SOLENOID_HEATER_TC_NAME, false);
   
       if( 0 == indent_level) 
       {
@@ -4420,11 +4751,8 @@ class PbbTemperature final: public ::EmbeddedProto::MessageInterface
 
 
       EmbeddedProto::int32 ib_temperature_ = 0;
-      EmbeddedProto::int32 upper_pv_tc1_ = 0;
-      EmbeddedProto::int32 upper_pv_tc2_ = 0;
-      EmbeddedProto::int32 upper_pv_tc3_ = 0;
       EmbeddedProto::int32 lower_pv_tc1_ = 0;
-      EmbeddedProto::int32 lower_pv_tc2_ = 0;
+      EmbeddedProto::int32 low_solenoid_heater_tc_ = 0;
 
 };
 
@@ -5562,6 +5890,14 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_fcbPressure(rhs.get_fcbPressure());
           break;
 
+        case FieldNumber::FCBTEMPERATURE:
+          set_fcbtemperature(rhs.get_fcbtemperature());
+          break;
+
+        case FieldNumber::FCBCONTROLSTATUS:
+          set_fcbControlStatus(rhs.get_fcbControlStatus());
+          break;
+
         case FieldNumber::PBBPRESSURE:
           set_pbbPressure(rhs.get_pbbPressure());
           break;
@@ -5570,8 +5906,8 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_pbbTemperature(rhs.get_pbbTemperature());
           break;
 
-        case FieldNumber::COMBUSTIONCONTROLSTATUS:
-          set_combustionControlStatus(rhs.get_combustionControlStatus());
+        case FieldNumber::PBBCONTROLSTATUS:
+          set_pbbControlStatus(rhs.get_pbbControlStatus());
           break;
 
         case FieldNumber::FSBPRESSURE:
@@ -5652,6 +5988,14 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_fcbPressure(rhs.get_fcbPressure());
           break;
 
+        case FieldNumber::FCBTEMPERATURE:
+          set_fcbtemperature(rhs.get_fcbtemperature());
+          break;
+
+        case FieldNumber::FCBCONTROLSTATUS:
+          set_fcbControlStatus(rhs.get_fcbControlStatus());
+          break;
+
         case FieldNumber::PBBPRESSURE:
           set_pbbPressure(rhs.get_pbbPressure());
           break;
@@ -5660,8 +6004,8 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_pbbTemperature(rhs.get_pbbTemperature());
           break;
 
-        case FieldNumber::COMBUSTIONCONTROLSTATUS:
-          set_combustionControlStatus(rhs.get_combustionControlStatus());
+        case FieldNumber::PBBCONTROLSTATUS:
+          set_pbbControlStatus(rhs.get_pbbControlStatus());
           break;
 
         case FieldNumber::FSBPRESSURE:
@@ -5719,18 +6063,20 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
       BATTERY = 6,
       FLASHSTATE = 7,
       FCBPRESSURE = 8,
-      PBBPRESSURE = 9,
-      PBBTEMPERATURE = 10,
-      COMBUSTIONCONTROLSTATUS = 11,
-      FSBPRESSURE = 12,
-      FSBTEMPERATURE = 13,
-      NOSLOADCELL = 14,
-      RELAYSTATUS = 15,
-      PADBOXSTATUS = 16,
-      LAUNCHRAILLOADCELL = 17,
-      LRBTEMPERATURE = 18,
-      PRESSURELOG = 19,
-      HEATERSTATUS = 20
+      FCBTEMPERATURE = 9,
+      FCBCONTROLSTATUS = 10,
+      PBBPRESSURE = 11,
+      PBBTEMPERATURE = 12,
+      PBBCONTROLSTATUS = 13,
+      FSBPRESSURE = 14,
+      FSBTEMPERATURE = 15,
+      NOSLOADCELL = 16,
+      RELAYSTATUS = 17,
+      PADBOXSTATUS = 18,
+      LAUNCHRAILLOADCELL = 19,
+      LRBTEMPERATURE = 20,
+      PRESSURELOG = 21,
+      HEATERSTATUS = 22
     };
 
     TelemetryMessage& operator=(const TelemetryMessage& rhs)
@@ -5769,6 +6115,14 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_fcbPressure(rhs.get_fcbPressure());
           break;
 
+        case FieldNumber::FCBTEMPERATURE:
+          set_fcbtemperature(rhs.get_fcbtemperature());
+          break;
+
+        case FieldNumber::FCBCONTROLSTATUS:
+          set_fcbControlStatus(rhs.get_fcbControlStatus());
+          break;
+
         case FieldNumber::PBBPRESSURE:
           set_pbbPressure(rhs.get_pbbPressure());
           break;
@@ -5777,8 +6131,8 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_pbbTemperature(rhs.get_pbbTemperature());
           break;
 
-        case FieldNumber::COMBUSTIONCONTROLSTATUS:
-          set_combustionControlStatus(rhs.get_combustionControlStatus());
+        case FieldNumber::PBBCONTROLSTATUS:
+          set_pbbControlStatus(rhs.get_pbbControlStatus());
           break;
 
         case FieldNumber::FSBPRESSURE:
@@ -5860,6 +6214,14 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_fcbPressure(rhs.get_fcbPressure());
           break;
 
+        case FieldNumber::FCBTEMPERATURE:
+          set_fcbtemperature(rhs.get_fcbtemperature());
+          break;
+
+        case FieldNumber::FCBCONTROLSTATUS:
+          set_fcbControlStatus(rhs.get_fcbControlStatus());
+          break;
+
         case FieldNumber::PBBPRESSURE:
           set_pbbPressure(rhs.get_pbbPressure());
           break;
@@ -5868,8 +6230,8 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           set_pbbTemperature(rhs.get_pbbTemperature());
           break;
 
-        case FieldNumber::COMBUSTIONCONTROLSTATUS:
-          set_combustionControlStatus(rhs.get_combustionControlStatus());
+        case FieldNumber::PBBCONTROLSTATUS:
+          set_pbbControlStatus(rhs.get_pbbControlStatus());
           break;
 
         case FieldNumber::FSBPRESSURE:
@@ -6171,6 +6533,86 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
     inline const FcbPressure& get_fcbPressure() const { return message_.fcbPressure_; }
     inline const FcbPressure& fcbPressure() const { return message_.fcbPressure_; }
 
+    static constexpr char const* FCBTEMPERATURE_NAME = "fcbtemperature";
+    inline bool has_fcbtemperature() const
+    {
+      return FieldNumber::FCBTEMPERATURE == which_message_;
+    }
+    inline void clear_fcbtemperature()
+    {
+      if(FieldNumber::FCBTEMPERATURE == which_message_)
+      {
+        which_message_ = FieldNumber::NOT_SET;
+        message_.fcbtemperature_.~FcbTemperature();
+      }
+    }
+    inline void set_fcbtemperature(const FcbTemperature& value)
+    {
+      if(FieldNumber::FCBTEMPERATURE != which_message_)
+      {
+        init_message(FieldNumber::FCBTEMPERATURE);
+      }
+      message_.fcbtemperature_ = value;
+    }
+    inline void set_fcbtemperature(const FcbTemperature&& value)
+    {
+      if(FieldNumber::FCBTEMPERATURE != which_message_)
+      {
+        init_message(FieldNumber::FCBTEMPERATURE);
+      }
+      message_.fcbtemperature_ = value;
+    }
+    inline FcbTemperature& mutable_fcbtemperature()
+    {
+      if(FieldNumber::FCBTEMPERATURE != which_message_)
+      {
+        init_message(FieldNumber::FCBTEMPERATURE);
+      }
+      return message_.fcbtemperature_;
+    }
+    inline const FcbTemperature& get_fcbtemperature() const { return message_.fcbtemperature_; }
+    inline const FcbTemperature& fcbtemperature() const { return message_.fcbtemperature_; }
+
+    static constexpr char const* FCBCONTROLSTATUS_NAME = "fcbControlStatus";
+    inline bool has_fcbControlStatus() const
+    {
+      return FieldNumber::FCBCONTROLSTATUS == which_message_;
+    }
+    inline void clear_fcbControlStatus()
+    {
+      if(FieldNumber::FCBCONTROLSTATUS == which_message_)
+      {
+        which_message_ = FieldNumber::NOT_SET;
+        message_.fcbControlStatus_.~FcbControlStatus();
+      }
+    }
+    inline void set_fcbControlStatus(const FcbControlStatus& value)
+    {
+      if(FieldNumber::FCBCONTROLSTATUS != which_message_)
+      {
+        init_message(FieldNumber::FCBCONTROLSTATUS);
+      }
+      message_.fcbControlStatus_ = value;
+    }
+    inline void set_fcbControlStatus(const FcbControlStatus&& value)
+    {
+      if(FieldNumber::FCBCONTROLSTATUS != which_message_)
+      {
+        init_message(FieldNumber::FCBCONTROLSTATUS);
+      }
+      message_.fcbControlStatus_ = value;
+    }
+    inline FcbControlStatus& mutable_fcbControlStatus()
+    {
+      if(FieldNumber::FCBCONTROLSTATUS != which_message_)
+      {
+        init_message(FieldNumber::FCBCONTROLSTATUS);
+      }
+      return message_.fcbControlStatus_;
+    }
+    inline const FcbControlStatus& get_fcbControlStatus() const { return message_.fcbControlStatus_; }
+    inline const FcbControlStatus& fcbControlStatus() const { return message_.fcbControlStatus_; }
+
     static constexpr char const* PBBPRESSURE_NAME = "pbbPressure";
     inline bool has_pbbPressure() const
     {
@@ -6251,45 +6693,45 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
     inline const PbbTemperature& get_pbbTemperature() const { return message_.pbbTemperature_; }
     inline const PbbTemperature& pbbTemperature() const { return message_.pbbTemperature_; }
 
-    static constexpr char const* COMBUSTIONCONTROLSTATUS_NAME = "combustionControlStatus";
-    inline bool has_combustionControlStatus() const
+    static constexpr char const* PBBCONTROLSTATUS_NAME = "pbbControlStatus";
+    inline bool has_pbbControlStatus() const
     {
-      return FieldNumber::COMBUSTIONCONTROLSTATUS == which_message_;
+      return FieldNumber::PBBCONTROLSTATUS == which_message_;
     }
-    inline void clear_combustionControlStatus()
+    inline void clear_pbbControlStatus()
     {
-      if(FieldNumber::COMBUSTIONCONTROLSTATUS == which_message_)
+      if(FieldNumber::PBBCONTROLSTATUS == which_message_)
       {
         which_message_ = FieldNumber::NOT_SET;
-        message_.combustionControlStatus_.~CombustionControlStatus();
+        message_.pbbControlStatus_.~PbbControlStatus();
       }
     }
-    inline void set_combustionControlStatus(const CombustionControlStatus& value)
+    inline void set_pbbControlStatus(const PbbControlStatus& value)
     {
-      if(FieldNumber::COMBUSTIONCONTROLSTATUS != which_message_)
+      if(FieldNumber::PBBCONTROLSTATUS != which_message_)
       {
-        init_message(FieldNumber::COMBUSTIONCONTROLSTATUS);
+        init_message(FieldNumber::PBBCONTROLSTATUS);
       }
-      message_.combustionControlStatus_ = value;
+      message_.pbbControlStatus_ = value;
     }
-    inline void set_combustionControlStatus(const CombustionControlStatus&& value)
+    inline void set_pbbControlStatus(const PbbControlStatus&& value)
     {
-      if(FieldNumber::COMBUSTIONCONTROLSTATUS != which_message_)
+      if(FieldNumber::PBBCONTROLSTATUS != which_message_)
       {
-        init_message(FieldNumber::COMBUSTIONCONTROLSTATUS);
+        init_message(FieldNumber::PBBCONTROLSTATUS);
       }
-      message_.combustionControlStatus_ = value;
+      message_.pbbControlStatus_ = value;
     }
-    inline CombustionControlStatus& mutable_combustionControlStatus()
+    inline PbbControlStatus& mutable_pbbControlStatus()
     {
-      if(FieldNumber::COMBUSTIONCONTROLSTATUS != which_message_)
+      if(FieldNumber::PBBCONTROLSTATUS != which_message_)
       {
-        init_message(FieldNumber::COMBUSTIONCONTROLSTATUS);
+        init_message(FieldNumber::PBBCONTROLSTATUS);
       }
-      return message_.combustionControlStatus_;
+      return message_.pbbControlStatus_;
     }
-    inline const CombustionControlStatus& get_combustionControlStatus() const { return message_.combustionControlStatus_; }
-    inline const CombustionControlStatus& combustionControlStatus() const { return message_.combustionControlStatus_; }
+    inline const PbbControlStatus& get_pbbControlStatus() const { return message_.pbbControlStatus_; }
+    inline const PbbControlStatus& pbbControlStatus() const { return message_.pbbControlStatus_; }
 
     static constexpr char const* FSBPRESSURE_NAME = "fsbPressure";
     inline bool has_fsbPressure() const
@@ -6710,6 +7152,20 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           }
           break;
 
+        case FieldNumber::FCBTEMPERATURE:
+          if(has_fcbtemperature() && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+          {
+            return_value = message_.fcbtemperature_.serialize_with_id(static_cast<uint32_t>(FieldNumber::FCBTEMPERATURE), buffer, true);
+          }
+          break;
+
+        case FieldNumber::FCBCONTROLSTATUS:
+          if(has_fcbControlStatus() && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+          {
+            return_value = message_.fcbControlStatus_.serialize_with_id(static_cast<uint32_t>(FieldNumber::FCBCONTROLSTATUS), buffer, true);
+          }
+          break;
+
         case FieldNumber::PBBPRESSURE:
           if(has_pbbPressure() && (::EmbeddedProto::Error::NO_ERRORS == return_value))
           {
@@ -6724,10 +7180,10 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           }
           break;
 
-        case FieldNumber::COMBUSTIONCONTROLSTATUS:
-          if(has_combustionControlStatus() && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+        case FieldNumber::PBBCONTROLSTATUS:
+          if(has_pbbControlStatus() && (::EmbeddedProto::Error::NO_ERRORS == return_value))
           {
-            return_value = message_.combustionControlStatus_.serialize_with_id(static_cast<uint32_t>(FieldNumber::COMBUSTIONCONTROLSTATUS), buffer, true);
+            return_value = message_.pbbControlStatus_.serialize_with_id(static_cast<uint32_t>(FieldNumber::PBBCONTROLSTATUS), buffer, true);
           }
           break;
 
@@ -6828,9 +7284,11 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           case FieldNumber::BATTERY:
           case FieldNumber::FLASHSTATE:
           case FieldNumber::FCBPRESSURE:
+          case FieldNumber::FCBTEMPERATURE:
+          case FieldNumber::FCBCONTROLSTATUS:
           case FieldNumber::PBBPRESSURE:
           case FieldNumber::PBBTEMPERATURE:
-          case FieldNumber::COMBUSTIONCONTROLSTATUS:
+          case FieldNumber::PBBCONTROLSTATUS:
           case FieldNumber::FSBPRESSURE:
           case FieldNumber::FSBTEMPERATURE:
           case FieldNumber::NOSLOADCELL:
@@ -6909,14 +7367,20 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
         case FieldNumber::FCBPRESSURE:
           name = FCBPRESSURE_NAME;
           break;
+        case FieldNumber::FCBTEMPERATURE:
+          name = FCBTEMPERATURE_NAME;
+          break;
+        case FieldNumber::FCBCONTROLSTATUS:
+          name = FCBCONTROLSTATUS_NAME;
+          break;
         case FieldNumber::PBBPRESSURE:
           name = PBBPRESSURE_NAME;
           break;
         case FieldNumber::PBBTEMPERATURE:
           name = PBBTEMPERATURE_NAME;
           break;
-        case FieldNumber::COMBUSTIONCONTROLSTATUS:
-          name = COMBUSTIONCONTROLSTATUS_NAME;
+        case FieldNumber::PBBCONTROLSTATUS:
+          name = PBBCONTROLSTATUS_NAME;
           break;
         case FieldNumber::FSBPRESSURE:
           name = FSBPRESSURE_NAME;
@@ -7048,9 +7512,11 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
         Battery battery_;
         Flash flashState_;
         FcbPressure fcbPressure_;
+        FcbTemperature fcbtemperature_;
+        FcbControlStatus fcbControlStatus_;
         PbbPressure pbbPressure_;
         PbbTemperature pbbTemperature_;
-        CombustionControlStatus combustionControlStatus_;
+        PbbControlStatus pbbControlStatus_;
         FsbPressure fsbPressure_;
         FsbTemperature fsbTemperature_;
         NosLoadCell nosLoadCell_;
@@ -7098,6 +7564,14 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
             new(&message_.fcbPressure_) FcbPressure;
             break;
 
+          case FieldNumber::FCBTEMPERATURE:
+            new(&message_.fcbtemperature_) FcbTemperature;
+            break;
+
+          case FieldNumber::FCBCONTROLSTATUS:
+            new(&message_.fcbControlStatus_) FcbControlStatus;
+            break;
+
           case FieldNumber::PBBPRESSURE:
             new(&message_.pbbPressure_) PbbPressure;
             break;
@@ -7106,8 +7580,8 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
             new(&message_.pbbTemperature_) PbbTemperature;
             break;
 
-          case FieldNumber::COMBUSTIONCONTROLSTATUS:
-            new(&message_.combustionControlStatus_) CombustionControlStatus;
+          case FieldNumber::PBBCONTROLSTATUS:
+            new(&message_.pbbControlStatus_) PbbControlStatus;
             break;
 
           case FieldNumber::FSBPRESSURE:
@@ -7175,14 +7649,20 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           case FieldNumber::FCBPRESSURE:
             ::EmbeddedProto::destroy_at(&message_.fcbPressure_);
             break;
+          case FieldNumber::FCBTEMPERATURE:
+            ::EmbeddedProto::destroy_at(&message_.fcbtemperature_);
+            break;
+          case FieldNumber::FCBCONTROLSTATUS:
+            ::EmbeddedProto::destroy_at(&message_.fcbControlStatus_);
+            break;
           case FieldNumber::PBBPRESSURE:
             ::EmbeddedProto::destroy_at(&message_.pbbPressure_);
             break;
           case FieldNumber::PBBTEMPERATURE:
             ::EmbeddedProto::destroy_at(&message_.pbbTemperature_);
             break;
-          case FieldNumber::COMBUSTIONCONTROLSTATUS:
-            ::EmbeddedProto::destroy_at(&message_.combustionControlStatus_);
+          case FieldNumber::PBBCONTROLSTATUS:
+            ::EmbeddedProto::destroy_at(&message_.pbbControlStatus_);
             break;
           case FieldNumber::FSBPRESSURE:
             ::EmbeddedProto::destroy_at(&message_.fsbPressure_);
@@ -7248,14 +7728,20 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           case FieldNumber::FCBPRESSURE:
             return_value = message_.fcbPressure_.deserialize_check_type(buffer, wire_type);
             break;
+          case FieldNumber::FCBTEMPERATURE:
+            return_value = message_.fcbtemperature_.deserialize_check_type(buffer, wire_type);
+            break;
+          case FieldNumber::FCBCONTROLSTATUS:
+            return_value = message_.fcbControlStatus_.deserialize_check_type(buffer, wire_type);
+            break;
           case FieldNumber::PBBPRESSURE:
             return_value = message_.pbbPressure_.deserialize_check_type(buffer, wire_type);
             break;
           case FieldNumber::PBBTEMPERATURE:
             return_value = message_.pbbTemperature_.deserialize_check_type(buffer, wire_type);
             break;
-          case FieldNumber::COMBUSTIONCONTROLSTATUS:
-            return_value = message_.combustionControlStatus_.deserialize_check_type(buffer, wire_type);
+          case FieldNumber::PBBCONTROLSTATUS:
+            return_value = message_.pbbControlStatus_.deserialize_check_type(buffer, wire_type);
             break;
           case FieldNumber::FSBPRESSURE:
             return_value = message_.fsbPressure_.deserialize_check_type(buffer, wire_type);
@@ -7320,14 +7806,20 @@ class TelemetryMessage final: public ::EmbeddedProto::MessageInterface
           case FieldNumber::FCBPRESSURE:
             left_chars = message_.fcbPressure_.to_string(left_chars, indent_level, FCBPRESSURE_NAME, first_field);
             break;
+          case FieldNumber::FCBTEMPERATURE:
+            left_chars = message_.fcbtemperature_.to_string(left_chars, indent_level, FCBTEMPERATURE_NAME, first_field);
+            break;
+          case FieldNumber::FCBCONTROLSTATUS:
+            left_chars = message_.fcbControlStatus_.to_string(left_chars, indent_level, FCBCONTROLSTATUS_NAME, first_field);
+            break;
           case FieldNumber::PBBPRESSURE:
             left_chars = message_.pbbPressure_.to_string(left_chars, indent_level, PBBPRESSURE_NAME, first_field);
             break;
           case FieldNumber::PBBTEMPERATURE:
             left_chars = message_.pbbTemperature_.to_string(left_chars, indent_level, PBBTEMPERATURE_NAME, first_field);
             break;
-          case FieldNumber::COMBUSTIONCONTROLSTATUS:
-            left_chars = message_.combustionControlStatus_.to_string(left_chars, indent_level, COMBUSTIONCONTROLSTATUS_NAME, first_field);
+          case FieldNumber::PBBCONTROLSTATUS:
+            left_chars = message_.pbbControlStatus_.to_string(left_chars, indent_level, PBBCONTROLSTATUS_NAME, first_field);
             break;
           case FieldNumber::FSBPRESSURE:
             left_chars = message_.fsbPressure_.to_string(left_chars, indent_level, FSBPRESSURE_NAME, first_field);
