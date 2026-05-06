@@ -22,24 +22,25 @@ message TelemetryMessage {
         Imu imu = 5;
         Battery battery = 6;
         Flash flashState = 7;
-        DmbPressure dmbPressure = 8;
+        FcbPressure fcbPressure = 8;
         PbbPressure pbbPressure = 9;
         PbbTemperature pbbTemperature = 10;
         CombustionControlStatus combustionControlStatus = 11;
-        RcuPressure rcuPressure = 12;
-        RcuTemperature rcuTemperature = 13;
+        FsbPressure fsbPressure = 12;
+        FsbTemperature fsbTemperature = 13;
         NosLoadCell nosLoadCell = 14;
         RelayStatus relayStatus = 15;
         PadBoxStatus padBoxStatus = 16;
         LaunchRailLoadCell launchRailLoadCell = 17;
-        SobTemperature sobTemperature = 18;
+        LrbTemperature lrbTemperature = 18;
 
         // Log-type messages
         PressureLog pressureLog = 19;
+        HeaterStatus heaterStatus = 20;
     }
 }
 
-/* DMB -> RCU Messages ---------------------------------------------------------------- */
+/* FCB -> FSB Messages ---------------------------------------------------------------- */
 message Gps{
     CoordinateType latitude = 1;   // latitude of rocket
     CoordinateType longitude = 2;  // longitude of rocket
@@ -95,20 +96,25 @@ message Flash {
     uint32 logging_rate = 2;
 }
 
-message DmbPressure{
+message FcbPressure{
     int32 upper_pv_pressure = 1; // pressure vessel pressure
 }
 
-/* PBB -> DMB Messages ---------------------------------------------------------------- */
+/* PBB -> FCB Messages ---------------------------------------------------------------- */
 
 message PbbPressure {
-    int32 ib_pressure = 1; //injector bulk pressure
-    int32 lower_pv_pressure = 2; //pressure vessel pressure
+    int32 ib_pressure = 1;              // injector bulk pressure
+    int32 upper_pv_pressure = 2;        // upper pressure vessel
+    int32 lower_pv_pressure = 3;        // lower pressure vessel
 }
 
 message PbbTemperature {
-    int32 ib_temperature = 1; //injector bulk temperature
-    int32 pv_temperature = 2; //pressure vessel temperature
+    int32 ib_temperature = 1;           // injector bulk temperature
+    int32 upper_pv_tc1 = 2;             // upper PV thermocouple 1
+    int32 upper_pv_tc2 = 3;             // upper PV thermocouple 2 (with heater)
+    int32 upper_pv_tc3 = 4;             // upper PV thermocouple 3
+    int32 lower_pv_tc1 = 5;             // lower PV thermocouple 1
+    int32 lower_pv_tc2 = 6;             // lower PV thermocouple 2 (with heater)
 }
 
 message CombustionControlStatus {
@@ -117,16 +123,21 @@ message CombustionControlStatus {
     bool mev_open = 3; 
 }
 
-/* RCU Messages ---------------------------------------------------------------- */
+message HeaterStatus {
+    bool upper_pv_tc2_heater_on = 1;    // upper heated thermocouple heater status
+    bool lower_pv_tc2_heater_on = 2;    // lower heated thermocouple heater status
+}
 
-message RcuPressure {
+/* FSB Messages ---------------------------------------------------------------- */
+
+message FsbPressure {
     int32 pt1_pressure = 1; //pressure transducer
     int32 pt2_pressure = 2;
     int32 pt3_pressure = 3;
     int32 pt4_pressure = 4;
 }
 
-message RcuTemperature {
+message FsbTemperature {
     int32 tc1_temperature = 1; //thermocouple
     int32 tc2_temperature = 2;
 }
@@ -162,13 +173,13 @@ message PadBoxStatus {
     bool box2_on = 4; // box 2 gpio state
 }
 
-/* SOB Messages ---------------------------------------------------------------- */
+/* LRB Messages ---------------------------------------------------------------- */
 
 message LaunchRailLoadCell {
     int32 rocket_mass = 1;
 }
 
-message SobTemperature {
+message LrbTemperature {
     int32 tc1_temperature = 1;
     int32 tc2_temperature = 2;
 }
