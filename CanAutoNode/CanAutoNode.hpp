@@ -18,7 +18,7 @@
 #include <random>
 
 constexpr uint32_t MAX_NODES_IN_NETWORK = 100;
-constexpr uint8_t MAX_LOG_TYPES_PER_NODE = 5;
+constexpr uint8_t MAX_LOG_TYPES_PER_NODE = 9;
 constexpr uint8_t MAX_NAME_STR_LEN = 20;
 constexpr uint8_t MAX_JOIN_ATTEMPTS = 8;
 // Max 2047 for 11-bit standard FDCAN, max 536,870,911 for extended FDCAN.
@@ -29,9 +29,9 @@ constexpr uint16_t MAX_CAN_ID = 2047;
 constexpr uint16_t JOIN_REQUEST_ID = 0;
 constexpr uint16_t ACK_ID = 1;
 constexpr uint16_t UPDATE_ID = 2;
-constexpr uint16_t KICK_REQUEST_ID = 3;
-constexpr uint16_t HEARTBEAT_ID = 4;
-constexpr uint16_t MAX_RESERVED_CAN_ID = 4; // Make sure to update if adding a new reserved ID
+constexpr uint16_t KICK_REQUEST_ID = 4;
+constexpr uint16_t HEARTBEAT_ID = 5;
+constexpr uint16_t MAX_RESERVED_CAN_ID = 5; // Make sure to update if adding a new reserved ID
 
 
 #ifdef CANAUTONODEDEBUG

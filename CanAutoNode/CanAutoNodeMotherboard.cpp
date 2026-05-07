@@ -117,7 +117,7 @@ CanAutoNodeMotherboard::CanAutoNodeMotherboard(FDCAN_HandleTypeDef *fdcan) {
 	//controller->RegisterFilterRXFIFO(0, MAX_RESERVED_CAN_ID);
 	memset(heartbeatGracePeriod,0x00,sizeof(heartbeatGracePeriod));
 
-	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{64,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
+	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{65,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
 	controller->RegisterLogs(reservedLogs, sizeof(reservedLogs)/sizeof(reservedLogs[0]));
 }
 
@@ -297,6 +297,7 @@ bool CanAutoNodeMotherboard::SendFullUpdate() {
 #endif
 			return false;
 		}
+		HAL_Delay(50);
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Sent daughter update frame %d/%d\n",i+1,nodesInNetwork);
 #endif

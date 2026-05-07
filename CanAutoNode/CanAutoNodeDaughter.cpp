@@ -145,7 +145,7 @@ bool CanAutoNodeDaughter::CheckForUpdate() {
 	if(GetCurrentState() != WAITING_FOR_UPDATE) {
 		return false;
 	}
-	uint8_t msg[64] = {123};
+	uint8_t msg[128] = {123};
 
 	while(controller->ReceiveLogIndexFromRXBuf(msg, UPDATE_ID)) {
 
@@ -278,7 +278,7 @@ CanAutoNodeDaughter::CanAutoNodeDaughter(FDCAN_HandleTypeDef *fdcan, const LogIn
 
 	//controller->RegisterFilterRXFIFO(0, MAX_RESERVED_CAN_ID);
 
-	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{64,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
+	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{65,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
 	controller->RegisterLogs(reservedLogs, sizeof(reservedLogs)/sizeof(reservedLogs[0]));
 
 
