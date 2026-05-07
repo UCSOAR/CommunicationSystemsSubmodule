@@ -34,5 +34,39 @@
 :: Windows. The reason this has to be used is that protoc expects a binary or
 :: terminal script as plugin. Directly calling python scripts is not supported.
 
-set EmbeddedProtoDir=%~dp0\EmbeddedProto
-call "%EmbeddedProtoDir%\protoc-gen-eams.bat"
+set "EmbeddedProtoDir=%~dp0EmbeddedProto"
+set "EmbeddedProtoGeneratorDir=%EmbeddedProtoDir%\generator"
+set "EmbeddedProtoVenvPlugin=%EmbeddedProtoDir%\venv\Scripts\protoc-gen-eams.exe"
+set "EmbeddedProtoVenvPluginBat=%EmbeddedProtoDir%\venv\Scripts\protoc-gen-eams.bat"
+set "EmbeddedProtoOptionsPy=%EmbeddedProtoGeneratorDir%\EmbeddedProto\embedded_proto_options_pb2.py"
+
+if exist "%EmbeddedProtoVenvPlugin%" (
+    call "%EmbeddedProtoVenvPlugin%"
+    exit /b %ERRORLEVEL%
+)
+
+if exist "%EmbeddedProtoVenvPluginBat%" (
+    call "%EmbeddedProtoVenvPluginBat%"
+    exit /b %ERRORLEVEL%
+)
+
+if not exist "%EmbeddedProtoOptionsPy%" (
+    pushd "%EmbeddedProtoGeneratorDir%" >nul
+    protoc --proto_path=. --python_out=EmbeddedProto embedded_proto_options.proto
+    if errorlevel 1 (
+        popd >nul
+        exit /b 1
+    )
+    popd >nul
+)
+
+set "PYTHONPATH=%EmbeddedProtoGeneratorDir%;%PYTHONPATH%"
+python -c "import jinja2, google.protobuf, six, toposort" 1>nul 2>nul
+if errorlevel 1 (
+    echo ERROR: EmbeddedProto Python dependencies were not found. 1>&2
+    echo Run QuickInstall.bat or run "python setup.py --ignore-version-diff" from the EmbeddedProto folder. 1>&2
+    exit /b 1
+)
+
+python -m EmbeddedProto.main --protoc-plugin
+exit /b %ERRORLEVEL%

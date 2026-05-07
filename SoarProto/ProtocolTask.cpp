@@ -12,7 +12,6 @@
 #include "CubeUtils.hpp"
 #include <cstring>
 
-#include "FlightTask.hpp"
 #include "UARTTask.hpp"
 #include "SystemDefines.hpp" // Note: Must include stm32x_hal.h in this file
 #include "cobs.h"
@@ -43,7 +42,7 @@ ProtocolTask::ProtocolTask(Proto::Node node, UARTDriver* uartDriver, uint16_t ua
 	kUart_(uartDriver), uartTaskCommand(uartTaskCmd), numUartErrors_(0)
 {
     // Setup Buffers
-    protocolRxBuffer = soar_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
+    protocolRxBuffer = cube_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
     memset(protocolRxBuffer, 0, PROTOCOL_RX_BUFFER_SZ_BYTES+1);
 
     // Setup index and flags
