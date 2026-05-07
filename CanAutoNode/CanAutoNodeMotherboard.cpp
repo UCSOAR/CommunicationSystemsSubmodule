@@ -328,7 +328,7 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 		HAL_Delay(1);
 		uint8_t out[64];
 		uint32_t id = 0;
-		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_ID)) {
+		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_ID-1)) {
 
 
 				UniqueBoardID responseID = MsgToData<UniqueBoardID>(out);

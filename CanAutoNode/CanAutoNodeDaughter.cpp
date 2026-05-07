@@ -173,7 +173,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 	}
 	uint8_t msg[64] = {};
 	bool gotOne = false;
-	while(controller->ReceiveLogIndexFromRXBuf(msg, KICK_REQUEST_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, KICK_REQUEST_ID - 1)) {
 		gotOne = true;
 
 		UniqueBoardID kickedBoard = MsgToData<UniqueBoardID>(msg);
@@ -202,7 +202,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 		ChangeState( WAITING_FOR_UPDATE);
 		gotOne = true;
 	}
-	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_ID - 1)) {
 
 
 		if(MsgToData<UniqueBoardID>(msg) == Motherboard.uniqueID) {
