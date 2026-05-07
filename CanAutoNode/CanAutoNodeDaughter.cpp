@@ -209,6 +209,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 #ifdef CANAUTONODEDEBUG
 			SOAR_PRINT("Received heartbeat\n");
 #endif
+			HAL_Delay(thisNode.uniqueID.u2 % 100);
 			SendHeartbeat();
 		}
 		gotOne = true;
