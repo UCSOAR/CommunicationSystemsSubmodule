@@ -79,7 +79,7 @@ bool CanAutoNodeDaughter::RequestToJoinNetwork() {
 	uint8_t msg[sizeof(JoinRequest)];
 	DataToMsg<JoinRequest>(request, msg);
 
-	return controller->SendByMsgID(msg, sizeof(msg), JOIN_REQUEST_ID);
+	return controller->SendByMsgID(msg, sizeof(msg), JOIN_REQUEST_CAN_ID);
 }
 
 CanAutoNodeDaughter::~CanAutoNodeDaughter() {
@@ -99,7 +99,7 @@ bool CanAutoNodeDaughter::CheckForAcknowledgement() {
 	}
 	uint8_t msg[64] = {123};
 
-	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
 
 
 		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
@@ -108,7 +108,7 @@ bool CanAutoNodeDaughter::CheckForAcknowledgement() {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Good ACK!\n");
 #endif
-			controller->DiscardLog(KICK_REQUEST_ID); // So we don't immediately get kicked on rejoining after a daughter reset
+			controller->DiscardLog(KICK_REQUEST_RLOG_INDEX); // So we don't immediately get kicked on rejoining after a daughter reset
 			ChangeState(WAITING_FOR_UPDATE);
 			return true;
 
@@ -147,7 +147,7 @@ bool CanAutoNodeDaughter::CheckForUpdate() {
 	}
 	uint8_t msg[128] = {123};
 
-	while(controller->ReceiveLogIndexFromRXBuf(msg, UPDATE_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, UPDATE_RLOG_INDEX)) {
 
 
 		return ReceiveUpdate(msg);
@@ -171,9 +171,9 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 	if(GetCurrentState() != READY) {
 		return false;
 	}
-	uint8_t msg[64] = {};
+	uint8_t msg[128] = {};
 	bool gotOne = false;
-	while(controller->ReceiveLogIndexFromRXBuf(msg, KICK_REQUEST_ID - 1)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, KICK_REQUEST_RLOG_INDEX)) {
 		gotOne = true;
 
 		UniqueBoardID kickedBoard = MsgToData<UniqueBoardID>(msg);
@@ -193,7 +193,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 		ChangeState(WAITING_FOR_UPDATE);
 		gotOne = true;
 	}
-	while(controller->ReceiveLogIndexFromRXBuf(msg, JOIN_REQUEST_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, JOIN_REQUEST_RLOG_INDEX)) {
 
 
 #ifdef CANAUTONODEDEBUG
@@ -202,7 +202,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 		ChangeState( WAITING_FOR_UPDATE);
 		gotOne = true;
 	}
-	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_ID - 1)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_RLOG_INDEX)) {
 
 		UniqueBoardID u = MsgToData<UniqueBoardID>(msg);
 		for (uint16_t i = 0; i < nodesInNetwork; i++) {
@@ -282,9 +282,7 @@ CanAutoNodeDaughter::CanAutoNodeDaughter(FDCAN_HandleTypeDef *fdcan, const LogIn
 	}
 
 
-	//controller->RegisterFilterRXFIFO(0, MAX_RESERVED_CAN_ID);
-
-	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{65,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
+	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_CAN_ID},{64,ACK_CAN_ID},{sizeof(Node)+1,UPDATE_CAN_ID},{64,KICK_REQUEST_CAN_ID},{64,HEARTBEAT_CAN_ID}};
 	controller->RegisterLogs(reservedLogs, sizeof(reservedLogs)/sizeof(reservedLogs[0]));
 
 
@@ -301,7 +299,7 @@ bool CanAutoNodeDaughter::SendMessageToMotherboardByLogID(uint16_t logID, const 
 		return false;
 	}
 	//printf("sending to motherboard log index %d\n",logID);
-	return controller->SendByLogIndex(msg, logID+MAX_RESERVED_CAN_ID+1);
+	return controller->SendByLogIndex(msg, logID+MAX_RESERVED_RLOG_INDEX+1);
 }
 
 /* Handle receiving part of an update, updating internal node references and changing state when ready.
@@ -380,7 +378,7 @@ bool CanAutoNodeDaughter::ReadMessageByLogIndex(uint8_t logIndex,
 		return false;
 	}
 	uint16_t logSize = determinedLogs[logIndex].byteLength;
-	return ReadMessageFromRXBuf(logIndex+MAX_RESERVED_CAN_ID+1, logSize, out, outLen);
+	return ReadMessageFromRXBuf(logIndex+MAX_RESERVED_RLOG_INDEX+1, logSize, out, outLen);
 
 }
 

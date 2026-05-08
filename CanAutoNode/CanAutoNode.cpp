@@ -157,7 +157,7 @@ bool CanAutoNode::SendHeartbeat() {
 
 	uint8_t msg[sizeof(HeartbeatInfo)] = {};
 	memcpy(msg,&beat,sizeof(msg));
-	return controller->SendByMsgID(msg, sizeof (msg), HEARTBEAT_ID);
+	return controller->SendByMsgID(msg, sizeof (msg), HEARTBEAT_CAN_ID);
 	//return controller->SendByMsgID(msg, sizeof(msg), HEARTBEAT_ID);
 
 }

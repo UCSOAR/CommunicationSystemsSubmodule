@@ -65,7 +65,7 @@ bool CanAutoNodeMotherboard::KickNode(UniqueBoardID uniqueBoardID) {
 
 	heartbeatGracePeriod[foundIndex] = heartbeatGracePeriod[nodesInNetwork];
 	}
-	if(!controller->SendByMsgID((uint8_t*)(&uniqueBoardID), sizeof(uniqueBoardID), KICK_REQUEST_ID)) {
+	if(!controller->SendByMsgID((uint8_t*)(&uniqueBoardID), sizeof(uniqueBoardID), KICK_REQUEST_CAN_ID)) {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Tried to kick node, but failed to send! (Attempted to kick ");
 		PrintBoardID(uniqueBoardID);
@@ -114,10 +114,10 @@ bool CanAutoNodeMotherboard::KickNode(uint16_t slotNumber) {
 CanAutoNodeMotherboard::CanAutoNodeMotherboard(FDCAN_HandleTypeDef *fdcan) {
 	controller = new FDCanController(fdcan,nullptr,0);
 	callbackcontroller = controller;
-	//controller->RegisterFilterRXFIFO(0, MAX_RESERVED_CAN_ID);
+
 	memset(heartbeatGracePeriod,0x00,sizeof(heartbeatGracePeriod));
 
-	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{65,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
+	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_CAN_ID},{64,ACK_CAN_ID},{sizeof(Node)+1,UPDATE_CAN_ID},{64,KICK_REQUEST_CAN_ID},{64,HEARTBEAT_CAN_ID}};
 	controller->RegisterLogs(reservedLogs, sizeof(reservedLogs)/sizeof(reservedLogs[0]));
 }
 
@@ -132,7 +132,7 @@ bool CanAutoNodeMotherboard::CheckForJoinRequest() {
 	uint32_t id = 0;
 
 
-	while(controller->ReceiveLogIndexFromRXBuf(msg, JOIN_REQUEST_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, JOIN_REQUEST_CAN_ID)) {
 
 		return ReceiveJoinRequest(msg);
 
@@ -260,7 +260,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 bool CanAutoNodeMotherboard::SendAck(acknowledgementStatus status) {
 
 	uint8_t msg[] = {static_cast<uint8_t>(status)};
-	return controller->SendByMsgID(msg, sizeof(msg), ACK_ID);
+	return controller->SendByMsgID(msg, sizeof(msg), ACK_CAN_ID);
 
 }
 
@@ -278,7 +278,7 @@ bool CanAutoNodeMotherboard::SendFullUpdate() {
 	msgFromNode(thisNode, msg+1);
 	msg[0] = CAN_UPDATE_MOTHERBOARD;
 
-	if(!controller->SendByMsgID(msg, sizeof(msg), UPDATE_ID)) {
+	if(!controller->SendByMsgID(msg, sizeof(msg), UPDATE_CAN_ID)) {
 #ifdef CANAUTONODEDEBUG
 	SOAR_PRINT("Failed to send motherboard update frame!\n");
 #endif
@@ -291,7 +291,7 @@ bool CanAutoNodeMotherboard::SendFullUpdate() {
 	for(uint16_t i = 0; i < nodesInNetwork; i++) {
 		msgFromNode(daughterNodes[i], msg+1);
 		msg[0] = (i == nodesInNetwork-1) ? CAN_UPDATE_LAST_DAUGHTER : CAN_UPDATE_DAUGHTER;
-		if(!controller->SendByMsgID(msg, sizeof(msg), UPDATE_ID)) {
+		if(!controller->SendByMsgID(msg, sizeof(msg), UPDATE_CAN_ID)) {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Tried but failed to send daughter update frame!\n");
 #endif
@@ -328,7 +328,7 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 		HAL_Delay(1);
 		uint8_t out[64];
 		uint32_t id = 0;
-		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_ID-1)) {
+		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_RLOG_INDEX)) {
 
 
 				UniqueBoardID responseID = MsgToData<UniqueBoardID>(out);

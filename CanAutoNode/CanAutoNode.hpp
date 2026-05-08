@@ -26,12 +26,19 @@ constexpr uint8_t MAX_JOIN_ATTEMPTS = 8;
 constexpr uint16_t MAX_CAN_ID = 2047;
 
 // Reserved CAN IDs
-constexpr uint16_t JOIN_REQUEST_ID = 0;
-constexpr uint16_t ACK_ID = 1;
-constexpr uint16_t UPDATE_ID = 2;
-constexpr uint16_t KICK_REQUEST_ID = 4;
-constexpr uint16_t HEARTBEAT_ID = 5;
+constexpr uint16_t JOIN_REQUEST_CAN_ID = 0;
+constexpr uint16_t ACK_CAN_ID = 1;
+constexpr uint16_t UPDATE_CAN_ID = 2;
+constexpr uint16_t KICK_REQUEST_CAN_ID = 4;
+constexpr uint16_t HEARTBEAT_CAN_ID = 5;
 constexpr uint16_t MAX_RESERVED_CAN_ID = 5; // Make sure to update if adding a new reserved ID
+
+constexpr uint16_t JOIN_REQUEST_RLOG_INDEX = 0;
+constexpr uint16_t ACK_RLOG_INDEX = 1;
+constexpr uint16_t UPDATE_RLOG_INDEX = 2;
+constexpr uint16_t KICK_REQUEST_RLOG_INDEX = 3;
+constexpr uint16_t HEARTBEAT_RLOG_INDEX = 4;
+constexpr uint16_t MAX_RESERVED_RLOG_INDEX = 4; // Make sure to update if adding a new reserved ID
 
 
 #ifdef CANAUTONODEDEBUG
@@ -123,7 +130,7 @@ protected:
 
 		char nodeName[MAX_NAME_STR_LEN];
 
-		uint16_t startingLogIndexOnMotherboard = MAX_RESERVED_CAN_ID+1;
+		uint16_t startingLogIndexOnMotherboard = MAX_RESERVED_RLOG_INDEX+1;
 
 		bool operator==(const Node&) const = default;
 		bool operator!=(const Node&) const = default;
