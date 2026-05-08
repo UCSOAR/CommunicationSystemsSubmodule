@@ -42,7 +42,7 @@ ProtocolTask::ProtocolTask(Proto::Node node, UARTDriver* uartDriver, uint16_t ua
 	kUart_(uartDriver), uartTaskCommand(uartTaskCmd), numUartErrors_(0)
 {
     // Setup Buffers
-    protocolRxBuffer = cube_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
+    protocolRxBuffer = soar_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
     memset(protocolRxBuffer, 0, PROTOCOL_RX_BUFFER_SZ_BYTES+1);
 
     // Setup index and flags

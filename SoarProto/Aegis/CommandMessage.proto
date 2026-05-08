@@ -48,9 +48,9 @@ message FcbCommand {
         RSC_ANY_TO_ABORT = 1;       // Transition to ABORT state - available from all states except for IGNITION/LAUNCH/BURN
         RSC_OPEN_VENT = 2;   // Open the vent valve
         RSC_CLOSE_VENT = 3;  // Close the vent valve
-        RSC_OPEN_DRAIN = 4; // Open the drain valve
-        RSC_CLOSE_DRAIN = 5; // Close the drain valve
-        RSC_MEV_CLOSE = 6;   // Forces MEV to close - ONLY supported in states where it is safe to close the MEV
+        RSC_OPEN_DRAIN = 4; // Not used for Aegis
+        RSC_CLOSE_DRAIN = 5; // Not used for Aegis
+        RSC_MEV_CLOSE = 6;   // Not used for Aegis
 
         //-- PRELAUNCH --
         RSC_GOTO_FILL = 7; // Transition to the FILL state
@@ -97,9 +97,9 @@ message FcbCommand {
         //-- TEST --
         RSC_GOTO_TEST = 21;
     //    RSC_MEV_CLOSE;
-        RSC_TEST_MEV_OPEN = 22;
-        RSC_TEST_MEV_ENABLE = 23;
-        RSC_TEST_MEV_DISABLE = 24;
+        RSC_TEST_MEV_OPEN = 22;     // Not used for Aegis
+        RSC_TEST_MEV_ENABLE = 23;   // Not used for Aegis
+        RSC_TEST_MEV_DISABLE = 24;  // Not used for Aegis
 
         //-- TECHNICAL --
         RSC_NONE = 25;   // Invalid command, must be last
