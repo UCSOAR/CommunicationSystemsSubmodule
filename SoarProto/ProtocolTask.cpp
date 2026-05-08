@@ -12,7 +12,7 @@
 #include "CubeUtils.hpp"
 #include <cstring>
 
-#include "FlightTask.hpp"
+//#include "FlightTask.hpp"
 #include "UARTTask.hpp"
 #include "SystemDefines.hpp" // Note: Must include stm32x_hal.h in this file
 #include "cobs.h"
