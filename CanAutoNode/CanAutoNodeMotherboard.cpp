@@ -236,7 +236,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 		daughterNodes[nodesInNetwork] = newNode;
 		recentlyJoined[recentlyJoinedNum++] = &daughterNodes[nodesInNetwork];
 		controller->RegisterLogs(newLogs, request.numberOfLogs);
-		heartbeatGracePeriod[nodesInNetwork] = 0;
+		heartbeatGracePeriod[nodesInNetwork] = 3;
 		nodesInNetwork++;
 		newNode.startingLogIndexOnMotherboard = nextFreeMotherboardLogIndex;
 		nextFreeMotherboardLogIndex += request.numberOfLogs;
@@ -396,7 +396,11 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Received no heartbeat from ");
 		PrintBoardID(daughterNodes[i].uniqueID);
+		if(heartbeatGracePeriod[i] > 0) {
+			SOAR_PRINT(", but it had grace!\n");
+		} else {
 		SOAR_PRINT(", kicking\n");
+		}
 #endif
 		if(heartbeatGracePeriod[i] > 0) {
 			heartbeatGracePeriod[i]--;

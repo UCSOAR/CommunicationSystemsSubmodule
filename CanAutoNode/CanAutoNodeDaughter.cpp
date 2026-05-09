@@ -391,3 +391,10 @@ bool CanAutoNodeDaughter::ReadMessageByLogIndex(uint8_t logIndex,
 uint16_t CanAutoNodeDaughter::GetSizeOfLog(uint8_t logIndex) const {
 	return determinedLogs[logIndex].byteLength;
 }
+
+bool CanAutoNodeDaughter::ExitErrorState() {
+	if(GetCurrentState() != CanAutoNodeDaughter::ERROR) {
+		return false;
+	}
+	ChangeState(CanAutoNodeDaughter::UNINITIALIZED);
+}

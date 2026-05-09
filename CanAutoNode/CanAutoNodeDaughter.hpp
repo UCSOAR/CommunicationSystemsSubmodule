@@ -63,6 +63,8 @@ public:
 
 	uint16_t GetSizeOfLog(uint8_t logIndex) const;
 
+	bool ExitErrorState();
+
 protected:
 
 
