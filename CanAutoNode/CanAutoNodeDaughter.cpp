@@ -159,10 +159,15 @@ bool CanAutoNodeDaughter::CheckForUpdate() {
 	// if the motherboard doesnt like the new board, dont even bother
 	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
 		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
+#ifdef CANAUTONODEDEBUG
+	SOAR_PRINT("even though we waiting for an update we got an ack of %d\n",incomingStatus);
+#endif
 		if(incomingStatus != ACK_GOOD) {
 			ChangeState(READY);
 			return true;
 		}
+
+
 
 	}
 
