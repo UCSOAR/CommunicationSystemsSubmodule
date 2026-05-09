@@ -171,7 +171,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 #endif
 			SendAck(ACK_BOARD_ALREADY_EXISTS);
 			HAL_Delay(10);
-			SendFullUpdate();
+			//SendFullUpdate();
 			//KickNode(request.uniqueID);
 			return false;
 		}

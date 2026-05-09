@@ -153,6 +153,18 @@ bool CanAutoNodeDaughter::CheckForUpdate() {
 	}
 	uint8_t msg[128] = {123};
 
+	// at this point the ack should have already been sent if it was this board joining,
+	// so if this hits that means another board in the network tried joining or was kicked
+	// if the motherboard doesnt like the new board, dont even bother
+	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
+		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
+		if(acknowledgementStatus != ACK_GOOD) {
+			ChangeState(READY);
+			return true;
+		}
+
+	}
+
 	while(controller->ReceiveLogIndexFromRXBuf(msg, UPDATE_RLOG_INDEX)) {
 
 
