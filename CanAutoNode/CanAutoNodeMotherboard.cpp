@@ -166,7 +166,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 
 		if(request.uniqueID == thisAlreadyExistingNode.uniqueID) {
 			// already have this board somehow
-			SendAck(ACK_BOARD_ALREADY_EXISTS);
+			//SendAck(ACK_BOARD_ALREADY_EXISTS);
 			KickNode(request.uniqueID);
 			return false;
 		}

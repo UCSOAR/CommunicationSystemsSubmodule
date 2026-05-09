@@ -212,7 +212,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 
 		HeartbeatInfo hi = MsgToData<HeartbeatInfo>(msg);
 		if(hi.dir != hi.FROM_MOTH) {
-			break;
+			continue;
 		}
 
 #ifdef CANAUTONODEDEBUG
