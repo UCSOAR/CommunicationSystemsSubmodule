@@ -323,7 +323,7 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 
 
 
-	bool received[nodesInNetwork];
+	uint8_t received[nodesInNetwork];
 	memset(received,0,sizeof(received));
 
 	for(uint16_t i = 0; i < 1000; i++) {
@@ -342,8 +342,8 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 #endif
 				for(int node = 0; node < nodesInNetwork; node++) {
 					if(daughterNodes[node].uniqueID == responseID) {
-						if(received[node]) {
-							// received multiple heartbeats from the same node?
+						if(received[node]++ > 2) {
+							// received 3 or more heartbeats from the same node?
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Received multiple heartbeats from ");
 		PrintBoardID(responseID);
@@ -354,7 +354,7 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Found the source of this heartbeat at %d!\n",node);
 #endif
-						received[node] = true;
+
 						foundResponder = true;
 						break;
 					}
