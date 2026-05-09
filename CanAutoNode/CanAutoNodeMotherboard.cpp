@@ -241,13 +241,14 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 			thisID += (request.logSizesInBytes[i]-1)/64+1;
 
 		}
+		newNode.startingLogIndexOnMotherboard = nextFreeMotherboardLogIndex;
+		nextFreeMotherboardLogIndex += request.numberOfLogs;
 		daughterNodes[nodesInNetwork] = newNode;
 		recentlyJoined[recentlyJoinedNum++] = &daughterNodes[nodesInNetwork];
 		controller->RegisterLogs(newLogs, request.numberOfLogs);
 		heartbeatGracePeriod[nodesInNetwork] = 3;
 		nodesInNetwork++;
-		newNode.startingLogIndexOnMotherboard = nextFreeMotherboardLogIndex;
-		nextFreeMotherboardLogIndex += request.numberOfLogs;
+
 
 		SendAck(ACK_GOOD);
 

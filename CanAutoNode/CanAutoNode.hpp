@@ -11,7 +11,7 @@
 /*
  * Define this to enable debug prints across the driver. Uses SOAR_PRINT.
  */
-#define CANAUTONODEDEBUG
+//#define CANAUTONODEDEBUG
 
 #ifdef CANAUTONODEDEBUG
 #include "SystemDefines.hpp"
@@ -44,7 +44,7 @@ constexpr uint16_t KICK_REQUEST_RLOG_INDEX = 3;
 constexpr uint16_t HEARTBEAT_RLOG_INDEX = 4;
 constexpr uint16_t MAX_RESERVED_RLOG_INDEX = 4; // Make sure to update if adding a new reserved ID
 
-constexpr uint16_t SEND_RECEIVE_ID_SPLIT_AMOUNT = MAX_CAN_ID/2;
+constexpr uint16_t SEND_RECEIVE_ID_SPLIT_AMOUNT = 0;
 
 #ifdef CANAUTONODEDEBUG
 //#include "Task.hpp"
