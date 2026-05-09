@@ -95,6 +95,7 @@ protected:
 	FDCanController::LogInitStruct determinedLogs[MAX_LOG_TYPES_PER_NODE];
 
 	bool initializedLogs = false;
+	UniqueBoardID lastDetectedJoinRequest = {0};
 
 //	const uint8_t boardType;
 //	const IDRange idRange;

@@ -61,6 +61,7 @@ bool CanAutoNodeDaughter::TryRequestingJoiningNetwork() {
  */
 bool CanAutoNodeDaughter::RequestToJoinNetwork() {
 
+	lastDetectedJoinRequest = thisNode.uniqueID;
 	JoinRequest request;
 	request.uniqueID = thisNode.uniqueID;
 	request.boardType = thisNode.boardType;
@@ -176,6 +177,13 @@ bool CanAutoNodeDaughter::CheckForUpdate() {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Update timed out!\n");
 #endif
+		if(lastDetectedJoinRequest != UniqueBoardID{0} && lastDetectedJoinRequest != thisNode.uniqueID) {
+#ifdef CANAUTONODEDEBUG
+		SOAR_PRINT("but its ok since that join request wasnt even mine :)\n");
+#endif
+		ChangeState(READY);
+		return false;
+		}
 		ChangeState(ERROR);
 	}
 	return false;
@@ -217,6 +225,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Saw a join request from another board\n");
 #endif
+		lastDetectedJoinRequest = MsgToData<JoinRequest>(msg).uniqueID;
 		ChangeState( WAITING_FOR_UPDATE);
 		gotOne = true;
 	}

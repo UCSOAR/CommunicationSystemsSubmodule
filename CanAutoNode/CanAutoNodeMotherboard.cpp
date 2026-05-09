@@ -169,10 +169,13 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 #ifdef CANAUTONODEDEBUG
 	SOAR_PRINT("But it already exists!\n");
 #endif
+			//HAL_Delay(20);
 			SendAck(ACK_BOARD_ALREADY_EXISTS);
-			HAL_Delay(10);
+			//HAL_Delay(10);
 			//SendFullUpdate();
+	//HAL_Delay(50);
 			//KickNode(request.uniqueID);
+	//SendFullUpdate();
 			return false;
 		}
 
