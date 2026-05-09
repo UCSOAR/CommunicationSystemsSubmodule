@@ -212,7 +212,7 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 
 		UniqueBoardID u = MsgToData<UniqueBoardID>(msg);
 		for (uint16_t i = 0; i < nodesInNetwork; i++) {
-			if(daughterNodes[nodesInNetwork].uniqueID == u) {
+			if(daughterNodes[i].uniqueID == u) {
 				break;
 			}
 		}

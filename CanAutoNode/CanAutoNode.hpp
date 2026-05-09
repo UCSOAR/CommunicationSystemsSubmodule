@@ -11,7 +11,11 @@
 /*
  * Define this to enable debug prints across the driver. Uses SOAR_PRINT.
  */
-//#define CANAUTONODEDEBUG
+#define CANAUTONODEDEBUG
+
+#ifdef CANAUTONODEDEBUG
+#include "SystemDefines.hpp"
+#endif
 
 #include "FDCan.h"
 #include <cstring>

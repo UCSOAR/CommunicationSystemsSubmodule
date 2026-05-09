@@ -435,7 +435,7 @@ bool CanAutoNodeMotherboard::ReadMessageFromDaughterByLogIndex(
 		}
 	}
 #ifdef CANAUTONODEDEBUG
-	SOAR_PRINT("No node with that ID!\n");
+	//SOAR_PRINT("No node with that ID!\n");
 #endif
 	return false;
 
