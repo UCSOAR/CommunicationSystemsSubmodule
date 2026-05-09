@@ -158,7 +158,7 @@ bool CanAutoNodeDaughter::CheckForUpdate() {
 	// if the motherboard doesnt like the new board, dont even bother
 	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
 		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
-		if(acknowledgementStatus != ACK_GOOD) {
+		if(incomingStatus != ACK_GOOD) {
 			ChangeState(READY);
 			return true;
 		}
@@ -423,4 +423,5 @@ bool CanAutoNodeDaughter::ExitErrorState() {
 		return false;
 	}
 	ChangeState(CanAutoNodeDaughter::UNINITIALIZED);
+	return true;
 }
