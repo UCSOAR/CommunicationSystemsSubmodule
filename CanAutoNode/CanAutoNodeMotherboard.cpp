@@ -167,6 +167,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 		if(request.uniqueID == thisAlreadyExistingNode.uniqueID) {
 			// already have this board somehow
 			SendAck(ACK_BOARD_ALREADY_EXISTS);
+			KickNode(request.uniqueID);
 			return false;
 		}
 
@@ -211,7 +212,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 
 	if(foundRoom)  {
 		// found no issues
-		SendAck(ACK_GOOD);
+
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Adding new node at ID range [%d,%d)\n",bestStartingFreeCANID,bestStartingFreeCANID+requiredTotalCANIDs);
 #endif
@@ -240,6 +241,7 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 		newNode.startingLogIndexOnMotherboard = nextFreeMotherboardLogIndex;
 		nextFreeMotherboardLogIndex += request.numberOfLogs;
 
+		SendAck(ACK_GOOD);
 
 		HAL_Delay(50);
 		return SendFullUpdate();

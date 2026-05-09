@@ -119,6 +119,12 @@ bool CanAutoNodeDaughter::CheckForAcknowledgement() {
 #endif
 			return false;
 
+		case ACK_BOARD_ALREADY_EXISTS:
+#ifdef CANAUTONODEDEBUG
+		SOAR_PRINT("Already exists somehow!\n");
+#endif
+			return false;
+
 		default:
 			// invalid ack
 			ChangeState(ERROR);
