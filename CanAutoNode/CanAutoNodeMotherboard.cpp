@@ -318,9 +318,14 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 
 	this->lastHeartbeatTick = HAL_GetTick();
 
+	if(nodesInNetwork == 0) { // there's nobody here, just don't
+		return true;
+	}
+
 	if(!SendHeartbeat()) {
 		return false;
 	}
+
 
 
 
@@ -333,8 +338,8 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 
 		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_RLOG_INDEX)) {
 
-
-				UniqueBoardID responseID = MsgToData<UniqueBoardID>(out);
+				HeartbeatInfo hi = MsgToData<HeartbeatInfo>(out);
+				UniqueBoardID responseID = hi.senderBoardID;
 				bool foundResponder = false;
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Got a heartbeat from ");
