@@ -290,6 +290,7 @@ bool CanAutoNodeMotherboard::SendFullUpdate() {
 	SOAR_PRINT("Sent motherboard update frame\n");
 #endif
 
+	HAL_Delay(50);
 	for(uint16_t i = 0; i < nodesInNetwork; i++) {
 		msgFromNode(daughterNodes[i], msg+1);
 		msg[0] = (i == nodesInNetwork-1) ? CAN_UPDATE_LAST_DAUGHTER : CAN_UPDATE_DAUGHTER;

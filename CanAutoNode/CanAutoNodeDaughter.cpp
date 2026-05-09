@@ -211,10 +211,8 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_RLOG_INDEX)) {
 
 		UniqueBoardID u = MsgToData<UniqueBoardID>(msg);
-		for (uint16_t i = 0; i < nodesInNetwork; i++) {
-			if(daughterNodes[i].uniqueID == u) {
-				break;
-			}
+		if(u != Motherboard.uniqueID) {
+			break;
 		}
 
 #ifdef CANAUTONODEDEBUG
