@@ -166,8 +166,13 @@ bool CanAutoNodeMotherboard::ReceiveJoinRequest(uint8_t* msg) {
 
 		if(request.uniqueID == thisAlreadyExistingNode.uniqueID) {
 			// already have this board somehow
-			//SendAck(ACK_BOARD_ALREADY_EXISTS);
-			KickNode(request.uniqueID);
+#ifdef CANAUTONODEDEBUG
+	SOAR_PRINT("But it already exists!\n");
+#endif
+			SendAck(ACK_BOARD_ALREADY_EXISTS);
+			HAL_Delay(10);
+			SendFullUpdate();
+			//KickNode(request.uniqueID);
 			return false;
 		}
 
@@ -332,8 +337,10 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 	uint8_t received[nodesInNetwork];
 	memset(received,0,sizeof(received));
 
-	for(uint16_t i = 0; i < 1000; i++) {
-		HAL_Delay(1);
+	uint32_t last = HAL_GetTick();
+	uint16_t i = 0;
+	while(HAL_GetTick()-last < 1000){
+		i++;
 		uint8_t out[64];
 
 		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_RLOG_INDEX)) {
@@ -395,6 +402,7 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 		if(i > 10 && nodesInNetwork == 0) {
 			return true; // don't bother waiting the whole timeout when there are no daughter nodes, we just want to see if there are any out-of-network responders
 		}
+
 	}
 
 	for(size_t i = 0; i < nodesInNetwork; i++) {

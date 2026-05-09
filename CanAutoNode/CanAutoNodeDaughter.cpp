@@ -208,6 +208,20 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 		ChangeState( WAITING_FOR_UPDATE);
 		gotOne = true;
 	}
+
+	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
+
+
+#ifdef CANAUTONODEDEBUG
+		SOAR_PRINT("Saw an ack, presumably for another board\n");
+#endif
+		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
+		if(incomingStatus != ACK_GOOD && GetCurrentState() == WAITING_FOR_UPDATE) {
+			ChangeState( READY);
+		}
+
+		gotOne = true;
+	}
 	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_RLOG_INDEX)) {
 
 		HeartbeatInfo hi = MsgToData<HeartbeatInfo>(msg);
