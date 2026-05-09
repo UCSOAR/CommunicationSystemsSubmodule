@@ -177,7 +177,7 @@ bool CanAutoNode::SendMessageToDaughterByLogIndex(UniqueBoardID boardID,
 	for(uint16_t i = 0; i < nodesInNetwork; i++) {
 		const Node& thisDaughter = daughterNodes[i];
 		if(thisDaughter.uniqueID == boardID) {
-			return controller->SendByMsgID(msg, thisDaughter.logSizesInBytes[logIndex], thisDaughter.logOffsetsInCANIDs[logIndex]+thisDaughter.canIDRange.start);
+			return controller->SendByMsgID(msg, thisDaughter.logSizesInBytes[logIndex], thisDaughter.logOffsetsInCANIDs[logIndex]+thisDaughter.canIDRange.start+SEND_RECEIVE_ID_SPLIT_AMOUNT);
 		}
 	}
 	return false;

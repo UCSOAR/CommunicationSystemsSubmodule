@@ -302,8 +302,10 @@ bool CanAutoNodeDaughter::SendMessageToMotherboardByLogID(uint16_t logID, const 
 	if(GetCurrentState() != READY) {
 		return false;
 	}
+	uint16_t txid = determinedLogs[logID].startingMsgID - SEND_RECEIVE_ID_SPLIT_AMOUNT;
 	//printf("sending to motherboard log index %d\n",logID);
-	return controller->SendByLogIndex(msg, logID+MAX_RESERVED_RLOG_INDEX+1);
+	//return controller->SendByLogIndex(msg, logID+MAX_RESERVED_RLOG_INDEX+1);
+	return controller->SendByMsgID(msg, determinedLogs[logID].byteLength, txid);
 }
 
 /* Handle receiving part of an update, updating internal node references and changing state when ready.
@@ -338,7 +340,7 @@ bool CanAutoNodeDaughter::ReceiveUpdate(const uint8_t *msg) {
 				uint16_t canid = receivedNode.canIDRange.start;
 				for(uint16_t i = 0; i < numLogs; i++) {
 					uint16_t requiredIDs = (logsToInit[i].sizeInBytes-1)/64+1;
-					determinedLogs[i] = {logsToInit[i].sizeInBytes, canid};
+					determinedLogs[i] = {logsToInit[i].sizeInBytes, canid+SEND_RECEIVE_ID_SPLIT_AMOUNT};
 					canid += requiredIDs;
 #ifdef CANAUTONODEDEBUG
 	SOAR_PRINT("Registering log %d at canid %d byte size %d\n",i,determinedLogs[i].startingMsgID,determinedLogs[i].byteLength);
