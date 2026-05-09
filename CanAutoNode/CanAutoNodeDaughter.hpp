@@ -83,6 +83,10 @@ protected:
 
 	bool ReceiveUpdate(const uint8_t* msg);
 
+	HeartbeatInfo::DIRECTION GetDir() const override {
+		return HeartbeatInfo::TO_MOTH;
+	}
+
 	uint32_t tickLastReceivedUpdatePart = 0;
 
 	LogInit logsToInit[MAX_LOG_TYPES_PER_NODE];

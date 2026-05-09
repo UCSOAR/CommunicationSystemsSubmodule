@@ -42,6 +42,10 @@ private:
 
 	bool CheckForJoinRequest();
 
+	HeartbeatInfo::DIRECTION GetDir() const override {
+		return HeartbeatInfo::FROM_MOTH;
+	}
+
 	uint32_t lastHeartbeatTick = 0;
 
 	uint16_t nextFreeMotherboardLogIndex = MAX_RESERVED_RLOG_INDEX+1;

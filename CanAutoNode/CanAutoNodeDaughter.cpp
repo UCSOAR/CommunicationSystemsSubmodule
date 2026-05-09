@@ -210,15 +210,15 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 	}
 	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_RLOG_INDEX)) {
 
-		UniqueBoardID u = MsgToData<UniqueBoardID>(msg);
-		if(u != Motherboard.uniqueID) {
+		HeartbeatInfo hi = MsgToData<HeartbeatInfo>(msg);
+		if(hi.dir != hi.FROM_MOTH) {
 			break;
 		}
 
 #ifdef CANAUTONODEDEBUG
 			SOAR_PRINT("Received heartbeat\n");
 #endif
-			HAL_Delay(thisNode.uniqueID.u2 % 100);
+			HAL_Delay(thisNode.canIDRange.start*13 % 100);
 			SendHeartbeat();
 
 		gotOne = true;

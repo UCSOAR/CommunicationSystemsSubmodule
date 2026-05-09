@@ -154,7 +154,7 @@ bool CanAutoNode::SendHeartbeat() {
 
 	HeartbeatInfo beat;
 	beat.senderBoardID = thisNode.uniqueID;
-
+	beat.dir = GetDir();
 	uint8_t msg[sizeof(HeartbeatInfo)] = {};
 	memcpy(msg,&beat,sizeof(msg));
 	return controller->SendByMsgID(msg, sizeof (msg), HEARTBEAT_CAN_ID);

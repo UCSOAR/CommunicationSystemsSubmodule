@@ -144,6 +144,11 @@ protected:
 	static_assert(sizeof(Node) <= 64, "Node entries must be at most 64 bytes large. Try reducing MAX_LOGS");
 
 	struct HeartbeatInfo {
+		enum DIRECTION {
+			INVAL,
+			FROM_MOTH,
+			TO_MOTH
+		} dir;
 		UniqueBoardID senderBoardID;
 	};
 
@@ -190,6 +195,7 @@ protected:
 
 	bool ReadMessageFromRXBuf(uint8_t logIndex, uint16_t logSize, uint8_t* out, uint16_t outLen);
 
+	virtual HeartbeatInfo::DIRECTION GetDir() const = 0;
 private:
 	CanAutoNode(const CanAutoNode &other) = delete;
 

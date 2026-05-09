@@ -330,7 +330,7 @@ bool CanAutoNodeMotherboard::Heartbeat() {
 	for(uint16_t i = 0; i < 1000; i++) {
 		HAL_Delay(1);
 		uint8_t out[64];
-		uint32_t id = 0;
+
 		if(controller->ReceiveLogIndexFromRXBuf(out, HEARTBEAT_RLOG_INDEX)) {
 
 
@@ -468,5 +468,6 @@ uint16_t CanAutoNodeMotherboard::GetNamesOfNewlyJoinedBoards(char(*outputArr)[MA
 	}
 	memcpy(recentlyJoined,&recentlyJoined[recentlyJoinedNum-num],(num)*sizeof(Node*));
 	recentlyJoinedNum -= num;
+	return num;
 
 }
