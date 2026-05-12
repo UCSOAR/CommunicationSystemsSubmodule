@@ -12,6 +12,7 @@
  * Define this to enable debug prints across the driver. Uses SOAR_PRINT.
  */
 //#define CANAUTONODEDEBUG
+#define PACK_NETWORKLEVEL_CAN_STRUCTS
 
 #ifdef CANAUTONODEDEBUG
 #include "SystemDefines.hpp"
@@ -120,6 +121,9 @@ protected:
 		bool operator!=(const IDRange&) const = default;
 	};
 
+#ifdef PACK_NETWORKLEVEL_CAN_STRUCTS
+#pragma pack(push,1)
+#endif
 	struct Node {
 		IDRange canIDRange;
 		UniqueBoardID uniqueID = {0};
@@ -159,6 +163,10 @@ protected:
 		uint8_t numberOfLogs;
 		uint8_t logSizesInBytes[MAX_LOG_TYPES_PER_NODE];
 	};
+
+#ifdef PACK_NETWORKLEVEL_CAN_STRUCTS
+#pragma pack(pop)
+#endif
 
 	static_assert(sizeof(JoinRequest) <= 64, "Join request entries must be at most 64 bytes large. Try reducing MAX_LOGS");
 

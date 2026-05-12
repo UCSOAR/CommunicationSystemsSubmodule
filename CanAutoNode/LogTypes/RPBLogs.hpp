@@ -11,7 +11,9 @@
 #include "LogStructs.hpp"
 #include "CanAutoNodeDaughter.hpp"
 
-
+#ifdef PACK_CAN_STRUCTS
+#pragma pack(push,1)
+#endif
 // Custom Data Types
 struct RPB_CAMERA_POWER_COMMAND {
 	uint8_t camera;
@@ -35,6 +37,9 @@ struct RPB_FROM_DAQ_AIR_BRAKES_LEVEL {
 	uint8_t level;
 };
 
+#ifdef PACK_CAN_STRUCTS
+#pragma pack(pop)
+#endif
 // Add CAN logs here in the order you want them
 #define RPB_CAN_LOGS \
 	X(RPB_CAMERA_POWER_COMMAND) \

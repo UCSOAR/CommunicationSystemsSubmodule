@@ -11,10 +11,18 @@
 #include "LogStructs.hpp"
 #include "CanAutoNodeDaughter.hpp"
 
+#ifdef PACK_CAN_STRUCTS
+#pragma pack(push,1)
+#endif
 // Custom Data Types
 struct DAQ_AIR_BRAKES_COMMAND {
 	bool airBrakesGo;
 };
+
+
+#ifdef PACK_CAN_STRUCTS
+#pragma pack(pop)
+#endif
 
 // Add CAN logs here in the order you want them
 #define DAQ_LOGS_X \
