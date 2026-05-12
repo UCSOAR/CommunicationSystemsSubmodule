@@ -21,9 +21,9 @@
 #include <cstring>
 #include <random>
 
-constexpr uint32_t MAX_NODES_IN_NETWORK = 100;
+constexpr uint32_t MAX_NODES_IN_NETWORK = 20;
 constexpr uint8_t MAX_LOG_TYPES_PER_NODE = 9;
-constexpr uint8_t MAX_NAME_STR_LEN = 20;
+constexpr uint8_t MAX_NAME_STR_LEN = 10;
 constexpr uint8_t MAX_JOIN_ATTEMPTS = 8;
 // Max 2047 for 11-bit standard FDCAN, max 536,870,911 for extended FDCAN.
 // See transceiver and board capabilities before changing.
@@ -61,7 +61,6 @@ public:
 	CanAutoNode(CanAutoNode &&other) = delete;
 	CanAutoNode& operator=(const CanAutoNode &other) = delete;
 
-
 	enum updateType {
 		CAN_UPDATE_DAUGHTER,
 		CAN_UPDATE_LAST_DAUGHTER,
@@ -82,7 +81,6 @@ public:
 
 		bool operator==(const UniqueBoardID&) const = default;
 		bool operator!=(const UniqueBoardID&) const = default;
-
 	};
 
 	bool SendMessageToDaughterByLogIndex(UniqueBoardID boardID, uint8_t logIndex, const uint8_t* msg);
@@ -139,7 +137,6 @@ protected:
 
 		bool operator==(const Node&) const = default;
 		bool operator!=(const Node&) const = default;
-
 	};
 
 	static_assert(sizeof(Node) <= 64, "Node entries must be at most 64 bytes large. Try reducing MAX_LOGS");
@@ -197,9 +194,9 @@ protected:
 	bool ReadMessageFromRXBuf(uint8_t logIndex, uint16_t logSize, uint8_t* out, uint16_t outLen);
 
 	virtual HeartbeatInfo::DIRECTION GetDir() const = 0;
+
 private:
 	CanAutoNode(const CanAutoNode &other) = delete;
-
 
 };
 

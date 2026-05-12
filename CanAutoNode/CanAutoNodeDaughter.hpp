@@ -21,8 +21,6 @@ public:
 		ERROR
 	};
 
-	//CanAutoNodeDaughter(FDCanController* contr, uint16_t msgIDsToRequestStartID, uint16_t msgIDsToRequestAmount);
-
     CanAutoNodeDaughter(FDCAN_HandleTypeDef *fdcan,
     		const LogInit *logs, uint16_t numLogs, uint8_t boardType, uint8_t slotNumber, const char* readableName);
 	~CanAutoNodeDaughter();
@@ -31,9 +29,7 @@ public:
 	CanAutoNodeDaughter(const CanAutoNodeDaughter &) = delete;
 	CanAutoNodeDaughter &operator=(const CanAutoNodeDaughter &) = delete;
 
-
 	const daughterState GetCurrentState() const;
-
 
 	bool TryRequestingJoiningNetwork();
 
@@ -67,10 +63,8 @@ public:
 
 protected:
 
-
 	void ChangeState(daughterState target);
 
-//	uint32_t uniqueBoardID = HAL_GetDEVID();
 	Node Motherboard = {0};
 	bool CheckForAcknowledgement();
 	bool CheckForUpdate();
@@ -96,9 +90,6 @@ protected:
 
 	bool initializedLogs = false;
 	UniqueBoardID lastDetectedJoinRequest = {0};
-
-//	const uint8_t boardType;
-//	const IDRange idRange;
 
 };
 

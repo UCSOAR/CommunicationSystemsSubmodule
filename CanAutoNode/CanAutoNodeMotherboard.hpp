@@ -8,8 +8,10 @@ class CanAutoNodeMotherboard : public CanAutoNode {
 
 public:
 
-
 	CanAutoNodeMotherboard(FDCAN_HandleTypeDef *fdcan);
+
+	~CanAutoNodeMotherboard();
+	CanAutoNodeMotherboard() = delete;
 
 	bool CheckCANCommands() override {
 		return CheckForJoinRequest();
