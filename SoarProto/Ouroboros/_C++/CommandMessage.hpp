@@ -24,7 +24,7 @@
 
 namespace Proto {
 
-class DmbCommand final: public ::EmbeddedProto::MessageInterface
+class solCommand final: public ::EmbeddedProto::MessageInterface
 {
   public:
     DmbCommand() = default;
