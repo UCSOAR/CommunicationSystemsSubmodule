@@ -18,7 +18,7 @@
 
 #include "ControlMessage.hpp"
 #include "WriteBufferFixedSize.h"
-#include "_C++/ControlMessage.hpp"
+#include "ControlMessage.hpp"
 #include <ReadBufferFixedSize.h>
 
 /* Macros --------------------------------------------------------------------*/
