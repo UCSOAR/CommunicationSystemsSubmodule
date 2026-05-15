@@ -8,7 +8,7 @@
 #ifndef LOGSTRUCTS_HPP_
 #define LOGSTRUCTS_HPP_
 
-#define PACK_CAN_STRUCTS
+//#define PACK_CAN_STRUCTS
 
 #ifdef PACK_CAN_STRUCTS
 #pragma pack(push,1)

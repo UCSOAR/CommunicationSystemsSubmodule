@@ -12,7 +12,7 @@
  * Define this to enable debug prints across the driver. Uses SOAR_PRINT.
  */
 //#define CANAUTONODEDEBUG
-#define PACK_NETWORKLEVEL_CAN_STRUCTS
+//#define PACK_NETWORKLEVEL_CAN_STRUCTS
 
 #ifdef CANAUTONODEDEBUG
 #include "SystemDefines.hpp"
