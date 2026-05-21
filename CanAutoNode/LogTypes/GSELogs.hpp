@@ -17,26 +17,50 @@ struct GSE_AC1_OPEN_COMMAND {
 	bool open;
 };
 
-// struct RPB_CAMERA_RECORDING_COMMAND {
-// 	uint8_t camera;
-// 	bool record;
-// };
 
-// struct RPB_CAMERA_SWITCH_COMMAND {
-// 	uint8_t camera;
-// };
+struct GSE_KILL_PADBOX_COMMAND {
+	bool kill;
+};
 
-// struct RPB_AIR_BRAKES_COMMAND {
-// 	bool openAirBrakes;
-// };
+struct GSE_IGNITE_PADBOX_COMMAND {
+	bool ignite;
+};
 
-// struct RPB_FROM_DAQ_AIR_BRAKES_LEVEL {
-// 	uint8_t level;
-// };
+struct GSE_OPEN_PBV_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_SOL5_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_SOL6_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_SOL7_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_SOL8A_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_SOL8B_COMMAND {
+	bool open;
+};
 
 // // Add CAN logs here in the order you want them
 #define GSE_CAN_LOGS \
-X(GSE_AC1_OPEN_COMMAND)
+X(GSE_AC1_OPEN_COMMAND) \
+X(GSE_KILL_PADBOX_COMMAND) \
+X(GSE_IGNITE_PADBOX_COMMAND) \
+X(GSE_OPEN_PBV_COMMAND) \
+X(GSE_OPEN_SOL5_COMMAND) \
+X(GSE_OPEN_SOL6_COMMAND) \
+X(GSE_OPEN_SOL7_COMMAND) \
+X(GSE_OPEN_SOL8A_COMMAND) \
+X(GSE_OPEN_SOL8B_COMMAND) \
 
 // #define X(x) sizeof(x),
 // const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
