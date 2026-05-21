@@ -17,7 +17,6 @@ struct GSE_AC1_OPEN_COMMAND {
 	bool open;
 };
 
-
 struct GSE_KILL_PADBOX_COMMAND {
 	bool kill;
 };
@@ -26,7 +25,19 @@ struct GSE_IGNITE_PADBOX_COMMAND {
 	bool ignite;
 };
 
-struct GSE_OPEN_PBV_COMMAND {
+struct GSE_OPEN_PBV1_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_PBV2_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_PBV3_COMMAND {
+	bool open;
+};
+
+struct GSE_OPEN_PBV4_COMMAND {
 	bool open;
 };
 
@@ -50,17 +61,19 @@ struct GSE_OPEN_SOL8B_COMMAND {
 	bool open;
 };
 
-// // Add CAN logs here in the order you want them
 #define GSE_CAN_LOGS \
 X(GSE_AC1_OPEN_COMMAND) \
 X(GSE_KILL_PADBOX_COMMAND) \
 X(GSE_IGNITE_PADBOX_COMMAND) \
-X(GSE_OPEN_PBV_COMMAND) \
+X(GSE_OPEN_PBV1_COMMAND) \
+X(GSE_OPEN_PBV2_COMMAND) \
+X(GSE_OPEN_PBV3_COMMAND) \
+X(GSE_OPEN_PBV4_COMMAND) \
 X(GSE_OPEN_SOL5_COMMAND) \
 X(GSE_OPEN_SOL6_COMMAND) \
 X(GSE_OPEN_SOL7_COMMAND) \
 X(GSE_OPEN_SOL8A_COMMAND) \
-X(GSE_OPEN_SOL8B_COMMAND) \
+X(GSE_OPEN_SOL8B_COMMAND)
 
 // #define X(x) sizeof(x),
 // const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
