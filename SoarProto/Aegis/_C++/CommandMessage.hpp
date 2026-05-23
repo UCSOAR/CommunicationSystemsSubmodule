@@ -67,16 +67,18 @@ class FcbCommand final: public ::EmbeddedProto::MessageInterface
       RSC_TEST_MEV_OPEN = 22,
       RSC_TEST_MEV_ENABLE = 23,
       RSC_TEST_MEV_DISABLE = 24,
-      RSC_CAMERA_SWITCH = 25,
-      RSC_CAM1_ENABLE = 26,
-      RSC_CAM1_DISABLE = 27,
-      RSC_CAM2_ENABLE = 28,
-      RSC_CAM2_DISABLE = 29,
-      RSC_CAM3_ENABLE = 30,
-      RSC_CAM3_DISABLE = 31,
-      RSC_AIR_BRAKES_ENABLE = 32,
-      RSC_AIR_BRAKES_DISABLE = 33,
-      RSC_NONE = 34
+      RSC_CAMERA1_SWITCH = 25,
+      RSC_CAMERA2_SWITCH = 26,
+      RSC_CAMERA3_SWITCH = 27,
+      RSC_CAM1_ENABLE = 28,
+      RSC_CAM1_DISABLE = 29,
+      RSC_CAM2_ENABLE = 30,
+      RSC_CAM2_DISABLE = 31,
+      RSC_CAM3_ENABLE = 32,
+      RSC_CAM3_DISABLE = 33,
+      RSC_AIR_BRAKES_ENABLE = 34,
+      RSC_AIR_BRAKES_DISABLE = 35,
+      RSC_NONE = 36
     };
 
     enum class FieldNumber : uint32_t
