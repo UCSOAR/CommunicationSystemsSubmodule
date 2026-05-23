@@ -60,6 +60,8 @@ class FcbCommand(_message.Message):
         RSC_CAM2_DISABLE: _ClassVar[FcbCommand.Command]
         RSC_CAM3_ENABLE: _ClassVar[FcbCommand.Command]
         RSC_CAM3_DISABLE: _ClassVar[FcbCommand.Command]
+        RSC_AIR_BRAKES_ENABLE: _ClassVar[FcbCommand.Command]
+        RSC_AIR_BRAKES_DISABLE: _ClassVar[FcbCommand.Command]
         RSC_NONE: _ClassVar[FcbCommand.Command]
     RSC_FIRST_INVALID: FcbCommand.Command
     RSC_ANY_TO_ABORT: FcbCommand.Command
@@ -93,6 +95,8 @@ class FcbCommand(_message.Message):
     RSC_CAM2_DISABLE: FcbCommand.Command
     RSC_CAM3_ENABLE: FcbCommand.Command
     RSC_CAM3_DISABLE: FcbCommand.Command
+    RSC_AIR_BRAKES_ENABLE: FcbCommand.Command
+    RSC_AIR_BRAKES_DISABLE: FcbCommand.Command
     RSC_NONE: FcbCommand.Command
     COMMAND_ENUM_FIELD_NUMBER: _ClassVar[int]
     command_enum: FcbCommand.Command
