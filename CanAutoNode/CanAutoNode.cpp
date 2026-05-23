@@ -8,8 +8,6 @@
 #include <CanAutoNode.hpp>
 #include <cstring>
 
-
-
 CanAutoNode::~CanAutoNode() {
 
 }
@@ -44,9 +42,7 @@ bool CanAutoNode::IDRangesOverlap(IDRange a, IDRange b) {
  * @return Node represented by the bytes.
  */
 CanAutoNode::Node CanAutoNode::nodeFromMsg(const uint8_t *msg) {
-
 	return MsgToData<Node>(msg);
-
 }
 
 /* Converts a 32-bit integer into a byte sequence (big-endian).
@@ -62,10 +58,7 @@ void CanAutoNode::shift32to8(uint32_t in, uint8_t *out) {
  * @param msgout Pointer to output buffer. Must be as long as a Node struct.
  */
 void CanAutoNode::msgFromNode(Node node, uint8_t *msgout) {
-
 	memcpy(msgout,&node,sizeof(Node));
-
-
 }
 
 CanAutoNode::CanAutoNode() {
@@ -92,7 +85,6 @@ bool CanAutoNode::SendMessageToDaughterBoardByCANIDOffset(UniqueBoardID boardID,
 		}
 	}
 	return false;
-
 }
 
 /* Sends a message starting at a given CAN ID, regardless of which board has claimed it.
@@ -132,7 +124,6 @@ bool CanAutoNode::SendMessageToAllBoardsOfTypeByLogIndex(uint8_t boardType,
 		}
 	}
 	return foundOne;
-
 }
 
 #ifdef CANAUTONODEDEBUG
@@ -151,15 +142,12 @@ void CanAutoNode::PrintBoardID(CanAutoNode::UniqueBoardID id) {
  * @return true if successfully sent.
  */
 bool CanAutoNode::SendHeartbeat() {
-
 	HeartbeatInfo beat;
 	beat.senderBoardID = thisNode.uniqueID;
-
+	beat.dir = GetDir();
 	uint8_t msg[sizeof(HeartbeatInfo)] = {};
 	memcpy(msg,&beat,sizeof(msg));
-	return controller->SendByLogIndex(msg, HEARTBEAT_ID);
-	//return controller->SendByMsgID(msg, sizeof(msg), HEARTBEAT_ID);
-
+	return controller->SendByMsgID(msg, sizeof (msg), HEARTBEAT_CAN_ID);
 }
 
 /* Sends a message to a daughter board by a log index on that daughter board. Can be called from
@@ -177,7 +165,7 @@ bool CanAutoNode::SendMessageToDaughterByLogIndex(UniqueBoardID boardID,
 	for(uint16_t i = 0; i < nodesInNetwork; i++) {
 		const Node& thisDaughter = daughterNodes[i];
 		if(thisDaughter.uniqueID == boardID) {
-			return controller->SendByMsgID(msg, thisDaughter.logSizesInBytes[logIndex], thisDaughter.logOffsetsInCANIDs[logIndex]+thisDaughter.canIDRange.start);
+			return controller->SendByMsgID(msg, thisDaughter.logSizesInBytes[logIndex], thisDaughter.logOffsetsInCANIDs[logIndex]+thisDaughter.canIDRange.start+SEND_RECEIVE_ID_SPLIT_AMOUNT);
 		}
 	}
 	return false;
@@ -241,7 +229,6 @@ bool CanAutoNode::ReadMessageFromRXBuf(uint8_t logIndex, uint16_t logSize, uint8
 		memcpy(out,paddedOut,logSize);
 		return true;
 	}
-
 #ifdef CANAUTONODEDEBUG
 	//SOAR_PRINT("Buffer large enough, attempting read...\n");
 #endif
@@ -263,16 +250,13 @@ bool CanAutoNode::BoardExistsWithName(const char* name) {
 uint16_t CanAutoNode::GetNamesOfAllBoards(char(* outputArr)[MAX_NAME_STR_LEN], uint16_t outputArrayLen) {
 	uint16_t num = 0;
 	strncpy(outputArr[num++],thisNode.nodeName,MAX_NAME_STR_LEN);
-	//
 	for(uint16_t i = 0; i < nodesInNetwork; i++) {
 		strncpy(outputArr[num++],daughterNodes[i].nodeName,MAX_NAME_STR_LEN);
 		if(num >= outputArrayLen) {
 			break;
 		}
 	}
-
 	return num;
-
 }
 
 uint16_t CanAutoNode::GetIDsOfAllBoards(CanAutoNode::UniqueBoardID* outputArr, uint16_t outputArrayLen) {
@@ -284,9 +268,7 @@ uint16_t CanAutoNode::GetIDsOfAllBoards(CanAutoNode::UniqueBoardID* outputArr, u
 			break;
 		}
 	}
-
 	return num;
-
 }
 
 CanAutoNode::UniqueBoardID CanAutoNode::GetIDOfBoardWithName(const char* name) {
@@ -314,7 +296,6 @@ uint16_t CanAutoNode::GetNumberOfLogIndicesInBoard(UniqueBoardID board) {
 		}
 	}
 	return 0;
-
 }
 
 uint16_t CanAutoNode::GetSizeOfLogIndexInBoard(UniqueBoardID board, uint16_t logindex) {
