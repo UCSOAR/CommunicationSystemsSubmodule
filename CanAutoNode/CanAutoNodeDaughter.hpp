@@ -21,8 +21,6 @@ public:
 		ERROR
 	};
 
-	//CanAutoNodeDaughter(FDCanController* contr, uint16_t msgIDsToRequestStartID, uint16_t msgIDsToRequestAmount);
-
     CanAutoNodeDaughter(FDCAN_HandleTypeDef *fdcan,
     		const LogInit *logs, uint16_t numLogs, uint8_t boardType, uint8_t slotNumber, const char* readableName);
 	~CanAutoNodeDaughter();
@@ -31,9 +29,7 @@ public:
 	CanAutoNodeDaughter(const CanAutoNodeDaughter &) = delete;
 	CanAutoNodeDaughter &operator=(const CanAutoNodeDaughter &) = delete;
 
-
 	const daughterState GetCurrentState() const;
-
 
 	bool TryRequestingJoiningNetwork();
 
@@ -63,12 +59,12 @@ public:
 
 	uint16_t GetSizeOfLog(uint8_t logIndex) const;
 
-protected:
+	bool ExitErrorState();
 
+protected:
 
 	void ChangeState(daughterState target);
 
-//	uint32_t uniqueBoardID = HAL_GetDEVID();
 	Node Motherboard = {0};
 	bool CheckForAcknowledgement();
 	bool CheckForUpdate();
@@ -81,6 +77,10 @@ protected:
 
 	bool ReceiveUpdate(const uint8_t* msg);
 
+	HeartbeatInfo::DIRECTION GetDir() const override {
+		return HeartbeatInfo::TO_MOTH;
+	}
+
 	uint32_t tickLastReceivedUpdatePart = 0;
 
 	LogInit logsToInit[MAX_LOG_TYPES_PER_NODE];
@@ -89,9 +89,7 @@ protected:
 	FDCanController::LogInitStruct determinedLogs[MAX_LOG_TYPES_PER_NODE];
 
 	bool initializedLogs = false;
-
-//	const uint8_t boardType;
-//	const IDRange idRange;
+	UniqueBoardID lastDetectedJoinRequest = {0};
 
 };
 

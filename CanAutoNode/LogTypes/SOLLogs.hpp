@@ -5,8 +5,8 @@
  *      Author: Local user
  */
 
-#ifndef DAQLOGS_HPP_
-#define DAQLOGS_HPP_
+#ifndef SOLLOGS_HPP_
+#define SOLLOGS_HPP_
 
 #include "LogStructs.hpp"
 #include "CanAutoNodeDaughter.hpp"
@@ -15,27 +15,35 @@
 #pragma pack(push,1)
 #endif
 // Custom Data Types
-struct DAQ_AIR_BRAKES_COMMAND {
-	bool airBrakesGo;
-};
+struct SOL_POWER_COMMAND {
+	enum SOLENOID {
+		SOL_30W_A,
+		SOL_30W_B,
+		SOL_30W_C,
+		SOL_30W_D,
+		SOL_15W_A,
+		SOL_15W_B,
 
+	} sol;
+	bool powerOn;
+};
 
 #ifdef PACK_CAN_STRUCTS
 #pragma pack(pop)
 #endif
 
 // Add CAN logs here in the order you want them
-#define DAQ_LOGS_X \
-	X(CanImuData6Axis) \
-	X(DAQ_AIR_BRAKES_COMMAND)
-
+#define SOL_CAN_LOGS \
+	X(SOL_POWER_COMMAND)
 
 #define X(x) sizeof(x),
-const CanAutoNodeDaughter::LogInit DAQ_Init[] = {DAQ_LOGS_X};
+const CanAutoNodeDaughter::LogInit SOL_Init[] = {SOL_CAN_LOGS};
 #undef X
 
 #define X(x) _ ## x ## _LOGINDEX,
-enum DAQ_LogIndexes {DAQ_LOGS_X DAQ_COUNT};
+enum SOL_LogIndexes {SOL_CAN_LOGS SOL_COUNT} ;
 #undef X
 
-#endif /* DAQLOGS_HPP_ */
+
+#undef struct
+#endif /* SOLLOGS_HPP_ */

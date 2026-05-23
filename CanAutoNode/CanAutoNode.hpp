@@ -12,27 +12,40 @@
  * Define this to enable debug prints across the driver. Uses SOAR_PRINT.
  */
 //#define CANAUTONODEDEBUG
+//#define PACK_NETWORKLEVEL_CAN_STRUCTS
+
+#ifdef CANAUTONODEDEBUG
+#include "SystemDefines.hpp"
+#endif
 
 #include "FDCan.h"
 #include <cstring>
 #include <random>
 
-constexpr uint32_t MAX_NODES_IN_NETWORK = 100;
-constexpr uint8_t MAX_LOG_TYPES_PER_NODE = 5;
-constexpr uint8_t MAX_NAME_STR_LEN = 20;
+constexpr uint32_t MAX_NODES_IN_NETWORK = 20;
+constexpr uint8_t MAX_LOG_TYPES_PER_NODE = 9;
+constexpr uint8_t MAX_NAME_STR_LEN = 10;
 constexpr uint8_t MAX_JOIN_ATTEMPTS = 8;
 // Max 2047 for 11-bit standard FDCAN, max 536,870,911 for extended FDCAN.
 // See transceiver and board capabilities before changing.
 constexpr uint16_t MAX_CAN_ID = 2047;
 
 // Reserved CAN IDs
-constexpr uint16_t JOIN_REQUEST_ID = 0;
-constexpr uint16_t ACK_ID = 1;
-constexpr uint16_t UPDATE_ID = 2;
-constexpr uint16_t KICK_REQUEST_ID = 3;
-constexpr uint16_t HEARTBEAT_ID = 4;
-constexpr uint16_t MAX_RESERVED_CAN_ID = 4; // Make sure to update if adding a new reserved ID
+constexpr uint16_t JOIN_REQUEST_CAN_ID = 0;
+constexpr uint16_t ACK_CAN_ID = 1;
+constexpr uint16_t UPDATE_CAN_ID = 2;
+constexpr uint16_t KICK_REQUEST_CAN_ID = 4;
+constexpr uint16_t HEARTBEAT_CAN_ID = 5;
+constexpr uint16_t MAX_RESERVED_CAN_ID = 5; // Make sure to update if adding a new reserved ID
 
+constexpr uint16_t JOIN_REQUEST_RLOG_INDEX = 0;
+constexpr uint16_t ACK_RLOG_INDEX = 1;
+constexpr uint16_t UPDATE_RLOG_INDEX = 2;
+constexpr uint16_t KICK_REQUEST_RLOG_INDEX = 3;
+constexpr uint16_t HEARTBEAT_RLOG_INDEX = 4;
+constexpr uint16_t MAX_RESERVED_RLOG_INDEX = 4; // Make sure to update if adding a new reserved ID
+
+constexpr uint16_t SEND_RECEIVE_ID_SPLIT_AMOUNT = 0;
 
 #ifdef CANAUTONODEDEBUG
 //#include "Task.hpp"
@@ -48,7 +61,6 @@ public:
 	CanAutoNode& operator=(CanAutoNode &&other) = delete;
 	CanAutoNode(CanAutoNode &&other) = delete;
 	CanAutoNode& operator=(const CanAutoNode &other) = delete;
-
 
 	enum updateType {
 		CAN_UPDATE_DAUGHTER,
@@ -70,7 +82,6 @@ public:
 
 		bool operator==(const UniqueBoardID&) const = default;
 		bool operator!=(const UniqueBoardID&) const = default;
-
 	};
 
 	bool SendMessageToDaughterByLogIndex(UniqueBoardID boardID, uint8_t logIndex, const uint8_t* msg);
@@ -110,6 +121,9 @@ protected:
 		bool operator!=(const IDRange&) const = default;
 	};
 
+#ifdef PACK_NETWORKLEVEL_CAN_STRUCTS
+#pragma pack(push,1)
+#endif
 	struct Node {
 		IDRange canIDRange;
 		UniqueBoardID uniqueID = {0};
@@ -123,16 +137,20 @@ protected:
 
 		char nodeName[MAX_NAME_STR_LEN];
 
-		uint16_t startingLogIndexOnMotherboard = MAX_RESERVED_CAN_ID+1;
+		uint16_t startingLogIndexOnMotherboard = MAX_RESERVED_RLOG_INDEX+1;
 
 		bool operator==(const Node&) const = default;
 		bool operator!=(const Node&) const = default;
-
 	};
 
 	static_assert(sizeof(Node) <= 64, "Node entries must be at most 64 bytes large. Try reducing MAX_LOGS");
 
 	struct HeartbeatInfo {
+		enum DIRECTION {
+			INVAL,
+			FROM_MOTH,
+			TO_MOTH
+		} dir;
 		UniqueBoardID senderBoardID;
 	};
 
@@ -145,6 +163,10 @@ protected:
 		uint8_t numberOfLogs;
 		uint8_t logSizesInBytes[MAX_LOG_TYPES_PER_NODE];
 	};
+
+#ifdef PACK_NETWORKLEVEL_CAN_STRUCTS
+#pragma pack(pop)
+#endif
 
 	static_assert(sizeof(JoinRequest) <= 64, "Join request entries must be at most 64 bytes large. Try reducing MAX_LOGS");
 
@@ -179,9 +201,10 @@ protected:
 
 	bool ReadMessageFromRXBuf(uint8_t logIndex, uint16_t logSize, uint8_t* out, uint16_t outLen);
 
+	virtual HeartbeatInfo::DIRECTION GetDir() const = 0;
+
 private:
 	CanAutoNode(const CanAutoNode &other) = delete;
-
 
 };
 

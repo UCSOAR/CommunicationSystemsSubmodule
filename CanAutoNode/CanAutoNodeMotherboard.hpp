@@ -8,8 +8,10 @@ class CanAutoNodeMotherboard : public CanAutoNode {
 
 public:
 
-
 	CanAutoNodeMotherboard(FDCAN_HandleTypeDef *fdcan);
+
+	~CanAutoNodeMotherboard();
+	CanAutoNodeMotherboard() = delete;
 
 	bool CheckCANCommands() override {
 		return CheckForJoinRequest();
@@ -42,9 +44,13 @@ private:
 
 	bool CheckForJoinRequest();
 
+	HeartbeatInfo::DIRECTION GetDir() const override {
+		return HeartbeatInfo::FROM_MOTH;
+	}
+
 	uint32_t lastHeartbeatTick = 0;
 
-	uint16_t nextFreeMotherboardLogIndex = 0;
+	uint16_t nextFreeMotherboardLogIndex = MAX_RESERVED_RLOG_INDEX+1;
 
 	Node* recentlyJoined[MAX_NODES_IN_NETWORK];
 	uint16_t recentlyJoinedNum = 0;

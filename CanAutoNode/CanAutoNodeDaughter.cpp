@@ -2,8 +2,6 @@
 #include <cstring>
 
 
-
-
 /* Gets the state of this daughter board.
  * @return The current state.
  */
@@ -19,13 +17,13 @@ bool CanAutoNodeDaughter::TryRequestingJoiningNetwork() {
 	if(GetCurrentState() != UNINITIALIZED) {
 		return false;
 	}
-	srand(GetThisBoardUniqueID().u1);
+	srand(GetThisBoardUniqueID().u2 ^ GetThisBoardUniqueID().u1 ^ GetThisBoardUniqueID().u0);
 	uint16_t tries = 0;
 
 	while(1) {
 		if(!RequestToJoinNetwork()) {
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Failed try %d/%d\n",tries+1,MAX_JOIN_ATTEMPTS);
+			SOAR_PRINT("Failed try %d/%d\n",tries+1,MAX_JOIN_ATTEMPTS);
 #endif
 			HAL_Delay(rand()%500+100);
 			tries++;
@@ -36,24 +34,23 @@ bool CanAutoNodeDaughter::TryRequestingJoiningNetwork() {
 			ChangeState(REQUESTED_FAILED_WAITING_TO_RETRY);
 		} else {
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Successfully sent request\n");
+			SOAR_PRINT("Successfully sent request\n");
 #endif
 			ChangeState(REQUESTED_WAITING_FOR_RESPONSE);
 			HAL_Delay(rand()%500+100);
 			if(CheckForAcknowledgement()) {
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Received good ACK\n");
+				SOAR_PRINT("Received good ACK\n");
 #endif
 				return true;
 			} else {
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Non good ACK received\n");
+				SOAR_PRINT("Non good ACK received\n");
 #endif
 				ChangeState(REQUESTED_FAILED_WAITING_TO_RETRY);
 			}
 		}
 	}
-
 }
 
 /* Send a request to join the network on the reserved join request CAN ID.
@@ -61,6 +58,7 @@ bool CanAutoNodeDaughter::TryRequestingJoiningNetwork() {
  */
 bool CanAutoNodeDaughter::RequestToJoinNetwork() {
 
+	lastDetectedJoinRequest = thisNode.uniqueID;
 	JoinRequest request;
 	request.uniqueID = thisNode.uniqueID;
 	request.boardType = thisNode.boardType;
@@ -79,16 +77,18 @@ bool CanAutoNodeDaughter::RequestToJoinNetwork() {
 	uint8_t msg[sizeof(JoinRequest)];
 	DataToMsg<JoinRequest>(request, msg);
 
-	return controller->SendByMsgID(msg, sizeof(msg), JOIN_REQUEST_ID);
+	return controller->SendByMsgID(msg, sizeof(msg), JOIN_REQUEST_CAN_ID);
 }
 
+// you shouldn't be deleting this anyway but at least dont leak memory
 CanAutoNodeDaughter::~CanAutoNodeDaughter() {
-
+	if(controller) {
+		delete controller;
+	}
 }
 
-
-/* Exhausts the FIFO until any acknowledgment is received.
- * return true if a good acknowledgment is found.
+/* @brief Exhausts the FIFO until any acknowledgment is received.
+ * @return true if a good acknowledgment is found.
  */
 bool CanAutoNodeDaughter::CheckForAcknowledgement() {
 	if(GetCurrentState() != REQUESTED_WAITING_FOR_RESPONSE) {
@@ -97,25 +97,30 @@ bool CanAutoNodeDaughter::CheckForAcknowledgement() {
 #endif
 		return false;
 	}
-	uint8_t msg[64] = {123};
+	uint8_t msg[64] = {0};
 
-	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_ID)) {
-
+	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
 
 		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
 		switch(incomingStatus) {
 		case ACK_GOOD:
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Good ACK!\n");
+			SOAR_PRINT("Good ACK!\n");
 #endif
-			controller->DiscardLog(KICK_REQUEST_ID); // So we don't immediately get kicked on rejoining after a daughter reset
+			controller->DiscardLog(KICK_REQUEST_RLOG_INDEX); // So we don't immediately get kicked on rejoining after a daughter reset
 			ChangeState(WAITING_FOR_UPDATE);
 			return true;
 
 		case ACK_NO_ROOM:
 			ChangeState(ERROR);
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("No room!\n");
+			SOAR_PRINT("No room!\n");
+#endif
+			return false;
+
+		case ACK_BOARD_ALREADY_EXISTS:
+#ifdef CANAUTONODEDEBUG
+			SOAR_PRINT("Already exists somehow!\n");
 #endif
 			return false;
 
@@ -123,57 +128,73 @@ bool CanAutoNodeDaughter::CheckForAcknowledgement() {
 			// invalid ack
 			ChangeState(ERROR);
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Invalid ACK!\n");
+			SOAR_PRINT("Invalid ACK!\n");
 #endif
 			return false;
 		}
-
 	}
 #ifdef CANAUTONODEDEBUG
-		SOAR_PRINT("Didn't receive any ACK\n");
+	SOAR_PRINT("Didn't receive any ACK\n");
 #endif
 	// not received
 	return false;
 }
 
 
-/* Exhausts the FIFO until an update is found, or an update is partly received and times out.
- * return true if successfully received update.
+/* @brief Exhausts the FIFO until an update is found, or an update is partly received and times out.
+ * @return true if successfully received update.
  */
 bool CanAutoNodeDaughter::CheckForUpdate() {
 
 	if(GetCurrentState() != WAITING_FOR_UPDATE) {
 		return false;
 	}
-	uint8_t msg[64] = {123};
+	uint8_t msg[128] = {0};
 
-	while(controller->ReceiveLogIndexFromRXBuf(msg, UPDATE_ID)) {
+	// at this point the ack should have already been sent if it was this board joining,
+	// so if this hits that means another board in the network tried joining or was kicked
+	// if the motherboard doesnt like the new board, dont even bother
+	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
+		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
+#ifdef CANAUTONODEDEBUG
+		SOAR_PRINT("even though we waiting for an update we got an ack of %d\n",incomingStatus);
+#endif
+		if(incomingStatus != ACK_GOOD) {
+			ChangeState(READY);
+			return true;
+		}
+	}
 
-
+	while(controller->ReceiveLogIndexFromRXBuf(msg, UPDATE_RLOG_INDEX)) {
 		return ReceiveUpdate(msg);
-
 	}
 	// not received
 	if(HAL_GetTick() - tickLastReceivedUpdatePart > 1000) {
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Update timed out!\n");
 #endif
+		if(lastDetectedJoinRequest != UniqueBoardID{0} && lastDetectedJoinRequest != thisNode.uniqueID) {
+#ifdef CANAUTONODEDEBUG
+			SOAR_PRINT("but its ok since that join request wasnt even mine :)\n");
+#endif
+			ChangeState(READY);
+			return false;
+		}
 		ChangeState(ERROR);
 	}
 	return false;
-
 }
 
-/* Exhausts the FIFO until kick, join, or heartbeat is encountered while ready.
+/* @brief Exhausts the FIFO until kick, join, or heartbeat is encountered while ready.
  * @return true if any are found.
  */
 bool CanAutoNodeDaughter::ProcessMessage() {
 	if(GetCurrentState() != READY) {
 		return false;
 	}
-	uint8_t msg[64] = {};
+	uint8_t msg[128] = {};
 	bool gotOne = false;
-	while(controller->ReceiveLogIndexFromRXBuf(msg, KICK_REQUEST_ID)) {
+	while(controller->ReceiveLogIndexFromRXBuf(msg, KICK_REQUEST_RLOG_INDEX)) {
 		gotOne = true;
 
 		UniqueBoardID kickedBoard = MsgToData<UniqueBoardID>(msg);
@@ -193,28 +214,43 @@ bool CanAutoNodeDaughter::ProcessMessage() {
 		ChangeState(WAITING_FOR_UPDATE);
 		gotOne = true;
 	}
-	while(controller->ReceiveLogIndexFromRXBuf(msg, JOIN_REQUEST_ID)) {
-
+	while(controller->ReceiveLogIndexFromRXBuf(msg, JOIN_REQUEST_RLOG_INDEX)) {
 
 #ifdef CANAUTONODEDEBUG
 		SOAR_PRINT("Saw a join request from another board\n");
 #endif
+		lastDetectedJoinRequest = MsgToData<JoinRequest>(msg).uniqueID;
 		ChangeState( WAITING_FOR_UPDATE);
 		gotOne = true;
 	}
-	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_ID)) {
 
+	while(controller->ReceiveLogIndexFromRXBuf(msg, ACK_RLOG_INDEX)) {
 
-		if(MsgToData<UniqueBoardID>(msg) == Motherboard.uniqueID) {
 #ifdef CANAUTONODEDEBUG
-			SOAR_PRINT("Received heartbeat\n");
+		SOAR_PRINT("Saw an ack, presumably for another board\n");
 #endif
-			SendHeartbeat();
+		acknowledgementStatus incomingStatus = static_cast<acknowledgementStatus>(msg[0]);
+		if(incomingStatus != ACK_GOOD && GetCurrentState() == WAITING_FOR_UPDATE) {
+			ChangeState( READY);
 		}
+
 		gotOne = true;
 	}
+	while(controller->ReceiveLogIndexFromRXBuf(msg, HEARTBEAT_RLOG_INDEX)) {
 
+		HeartbeatInfo hi = MsgToData<HeartbeatInfo>(msg);
+		if(hi.dir != hi.FROM_MOTH) {
+			continue;
+		}
 
+#ifdef CANAUTONODEDEBUG
+		SOAR_PRINT("Received heartbeat\n");
+#endif
+		HAL_Delay(thisNode.canIDRange.start*13 % 100);
+		SendHeartbeat();
+
+		gotOne = true;
+	}
 	return gotOne;
 }
 
@@ -243,8 +279,6 @@ void CanAutoNodeDaughter::ChangeState(daughterState target) {
 		thisNode.canIDRange = {0,0};
 		break;
 
-
-
 	default:
 		break;
 	}
@@ -259,8 +293,8 @@ void CanAutoNodeDaughter::ChangeState(daughterState target) {
  */
 CanAutoNodeDaughter::CanAutoNodeDaughter(FDCAN_HandleTypeDef *fdcan, const LogInit *logs,
 		uint16_t numLogs, uint8_t boardType, uint8_t slotNumber, const char* readableName) {
-	controller = new FDCanController(fdcan,nullptr,0);
 
+	controller = new FDCanController(fdcan,nullptr,0);
 	memcpy(logsToInit,logs,numLogs*sizeof(LogInit));
 	this->numLogs = numLogs;
 	callbackcontroller = controller;
@@ -275,12 +309,8 @@ CanAutoNodeDaughter::CanAutoNodeDaughter(FDCAN_HandleTypeDef *fdcan, const LogIn
 		memset(this->thisNode.nodeName,0x00,MAX_NAME_STR_LEN);
 	}
 
-
-	//controller->RegisterFilterRXFIFO(0, MAX_RESERVED_CAN_ID);
-
-	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_ID},{64,ACK_ID},{64,UPDATE_ID},{64,KICK_REQUEST_ID},{64,HEARTBEAT_ID}};
+	FDCanController::LogInitStruct reservedLogs[] = {{64,JOIN_REQUEST_CAN_ID},{64,ACK_CAN_ID},{sizeof(Node)+1,UPDATE_CAN_ID},{64,KICK_REQUEST_CAN_ID},{64,HEARTBEAT_CAN_ID}};
 	controller->RegisterLogs(reservedLogs, sizeof(reservedLogs)/sizeof(reservedLogs[0]));
-
 
 }
 
@@ -294,8 +324,8 @@ bool CanAutoNodeDaughter::SendMessageToMotherboardByLogID(uint16_t logID, const 
 	if(GetCurrentState() != READY) {
 		return false;
 	}
-	//printf("sending to motherboard log index %d\n",logID);
-	return controller->SendByLogIndex(msg, logID+MAX_RESERVED_CAN_ID+1);
+	uint16_t txid = determinedLogs[logID].startingMsgID - SEND_RECEIVE_ID_SPLIT_AMOUNT;
+	return controller->SendByMsgID(msg, determinedLogs[logID].byteLength, txid);
 }
 
 /* Handle receiving part of an update, updating internal node references and changing state when ready.
@@ -316,47 +346,44 @@ bool CanAutoNodeDaughter::ReceiveUpdate(const uint8_t *msg) {
 		if(receivedNode.uniqueID != thisNode.uniqueID) {
 			this->daughterNodes[this->nodesInNetwork++] = receivedNode;
 #ifdef CANAUTONODEDEBUG
-	SOAR_PRINT("Received update for someone else... initializedLogs: %d, numLogs: %d, according to the update numLogs: %d\n",initializedLogs,numLogs,receivedNode.numberOfLogs);
+			SOAR_PRINT("Received update for someone else... initializedLogs: %d, numLogs: %d, according to the update numLogs: %d\n",initializedLogs,numLogs,receivedNode.numberOfLogs);
 
 #endif
 		} else {
 			this->thisNode = receivedNode;
 
 #ifdef CANAUTONODEDEBUG
-	SOAR_PRINT("Received update for me... initializedLogs: %d, numLogs: %d, according to the update numLogs: %d\n",initializedLogs,numLogs,receivedNode.numberOfLogs);
+			SOAR_PRINT("Received update for me... initializedLogs: %d, numLogs: %d, according to the update numLogs: %d\n",initializedLogs,numLogs,receivedNode.numberOfLogs);
 
 #endif
 			if(!initializedLogs) {
 				uint16_t canid = receivedNode.canIDRange.start;
 				for(uint16_t i = 0; i < numLogs; i++) {
 					uint16_t requiredIDs = (logsToInit[i].sizeInBytes-1)/64+1;
-					determinedLogs[i] = {logsToInit[i].sizeInBytes, canid};
+					determinedLogs[i] = {logsToInit[i].sizeInBytes, (uint16_t)(canid+SEND_RECEIVE_ID_SPLIT_AMOUNT)};
 					canid += requiredIDs;
 #ifdef CANAUTONODEDEBUG
-	SOAR_PRINT("Registering log %d at canid %d byte size %d\n",i,determinedLogs[i].startingMsgID,determinedLogs[i].byteLength);
+					SOAR_PRINT("Registering log %d at canid %d byte size %d\n",i,determinedLogs[i].startingMsgID,determinedLogs[i].byteLength);
 
 #endif
-
 				}
 				controller->RegisterLogs(determinedLogs, numLogs);
-
 				initializedLogs = true;
 			}
-
 		}
 #ifdef CANAUTONODEDEBUG
-	SOAR_PRINT("Received a daughter update part for ");
-	PrintBoardID(receivedNode.uniqueID);
-	SOAR_PRINT("\n");
+		SOAR_PRINT("Received a daughter update part for ");
+		PrintBoardID(receivedNode.uniqueID);
+		SOAR_PRINT("\n");
 #endif
 		break;
 
 	case CAN_UPDATE_MOTHERBOARD:
 		this->Motherboard = receivedNode;
 #ifdef CANAUTONODEDEBUG
-	SOAR_PRINT("Received a motherboard update part for ");
-	PrintBoardID(receivedNode.uniqueID);
-	SOAR_PRINT("\n");
+		SOAR_PRINT("Received a motherboard update part for ");
+		PrintBoardID(receivedNode.uniqueID);
+		SOAR_PRINT("\n");
 #endif
 		break;
 
@@ -374,10 +401,17 @@ bool CanAutoNodeDaughter::ReadMessageByLogIndex(uint8_t logIndex,
 		return false;
 	}
 	uint16_t logSize = determinedLogs[logIndex].byteLength;
-	return ReadMessageFromRXBuf(logIndex+MAX_RESERVED_CAN_ID+1, logSize, out, outLen);
-
+	return ReadMessageFromRXBuf(logIndex+MAX_RESERVED_RLOG_INDEX+1, logSize, out, outLen);
 }
 
 uint16_t CanAutoNodeDaughter::GetSizeOfLog(uint8_t logIndex) const {
 	return determinedLogs[logIndex].byteLength;
+}
+
+bool CanAutoNodeDaughter::ExitErrorState() {
+	if(GetCurrentState() != CanAutoNodeDaughter::ERROR) {
+		return false;
+	}
+	ChangeState(CanAutoNodeDaughter::UNINITIALIZED);
+	return true;
 }
