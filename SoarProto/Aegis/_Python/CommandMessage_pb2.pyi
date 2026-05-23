@@ -53,7 +53,9 @@ class FcbCommand(_message.Message):
         RSC_TEST_MEV_OPEN: _ClassVar[FcbCommand.Command]
         RSC_TEST_MEV_ENABLE: _ClassVar[FcbCommand.Command]
         RSC_TEST_MEV_DISABLE: _ClassVar[FcbCommand.Command]
-        RSC_CAMERA_SWITCH: _ClassVar[FcbCommand.Command]
+        RSC_CAMERA1_SWITCH: _ClassVar[FcbCommand.Command]
+        RSC_CAMERA2_SWITCH: _ClassVar[FcbCommand.Command]
+        RSC_CAMERA3_SWITCH: _ClassVar[FcbCommand.Command]
         RSC_CAM1_ENABLE: _ClassVar[FcbCommand.Command]
         RSC_CAM1_DISABLE: _ClassVar[FcbCommand.Command]
         RSC_CAM2_ENABLE: _ClassVar[FcbCommand.Command]
@@ -88,7 +90,9 @@ class FcbCommand(_message.Message):
     RSC_TEST_MEV_OPEN: FcbCommand.Command
     RSC_TEST_MEV_ENABLE: FcbCommand.Command
     RSC_TEST_MEV_DISABLE: FcbCommand.Command
-    RSC_CAMERA_SWITCH: FcbCommand.Command
+    RSC_CAMERA1_SWITCH: FcbCommand.Command
+    RSC_CAMERA2_SWITCH: FcbCommand.Command
+    RSC_CAMERA3_SWITCH: FcbCommand.Command
     RSC_CAM1_ENABLE: FcbCommand.Command
     RSC_CAM1_DISABLE: FcbCommand.Command
     RSC_CAM2_ENABLE: FcbCommand.Command
