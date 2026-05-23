@@ -101,8 +101,20 @@ message FcbCommand {
         RSC_TEST_MEV_ENABLE = 23;   // Not used for Aegis
         RSC_TEST_MEV_DISABLE = 24;  // Not used for Aegis
 
+        //CAMERA COMMANDS
+        RSC_CAMERA_SWITCH = 25;
+
+        RSC_CAM1_ENABLE = 26;
+        RSC_CAM1_DISABLE = 27;
+
+        RSC_CAM2_ENABLE = 28;
+        RSC_CAM2_DISABLE = 29;
+
+        RSC_CAM3_ENABLE = 30;
+        RSC_CAM3_DISABLE = 31;
+
         //-- TECHNICAL --
-        RSC_NONE = 25;   // Invalid command, must be last
+        RSC_NONE = 32;   // Invalid command, must be last
 
         // TODO NEW : ADD NEW COMMANDS FOR HEATER? OR AIRBRAKES AND STUFF. OR CREATE A NEW MESSAGE TYPE FOR NON-FLIGHT-SEQUENCE COMMANDS?
     }
