@@ -1,10 +1,10 @@
 /**
-  ******************************************************************************
-  * File Name          : ProtocolTask.cpp
-  * Description        : The base ProtocolTask for all boards, includes a UART Rx Handling and Functions for Tx/Rx of Protocol Data
-  *                      Should be derived from for a Board Specific Protocol Task that implements the pure virtual functions.
-  ******************************************************************************
-*/
+ ******************************************************************************
+ * File Name          : ProtocolTask.cpp
+ * Description        : The base ProtocolTask for all boards, includes a UART Rx Handling and Functions for Tx/Rx of Protocol Data
+ *                      Should be derived from for a Board Specific Protocol Task that implements the pure virtual functions.
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "ProtocolTask.hpp"
@@ -38,12 +38,12 @@ constexpr uint8_t PROTOCOL_TASK_PERIOD = 100;
 /**
  * @brief Constructor, sets all member variables
  */
-ProtocolTask::ProtocolTask(Proto::Node node, UARTDriver* uartDriver, uint16_t uartTaskCmd) : Task(TASK_PROTOCOL_QUEUE_DEPTH_OBJS),
-	kUart_(uartDriver), uartTaskCommand(uartTaskCmd), numUartErrors_(0)
+ProtocolTask::ProtocolTask(Proto::Node node, UARTDriver *uartDriver, uint16_t uartTaskCmd) : Task(TASK_PROTOCOL_QUEUE_DEPTH_OBJS),
+                                                                                             kUart_(uartDriver), uartTaskCommand(uartTaskCmd), numUartErrors_(0)
 {
     // Setup Buffers
-    protocolRxBuffer = soar_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES+1);
-    memset(protocolRxBuffer, 0, PROTOCOL_RX_BUFFER_SZ_BYTES+1);
+    protocolRxBuffer = cube_malloc(PROTOCOL_RX_BUFFER_SZ_BYTES + 1);
+    memset(protocolRxBuffer, 0, PROTOCOL_RX_BUFFER_SZ_BYTES + 1);
 
     // Setup index and flags
     protocolMsgIdx = 0;
@@ -54,55 +54,64 @@ ProtocolTask::ProtocolTask(Proto::Node node, UARTDriver* uartDriver, uint16_t ua
 /**
  *    @brief Runcode for the ProtocolTask
  */
-void ProtocolTask::Run(void * pvParams)
+void ProtocolTask::Run(void *pvParams)
 {
     // Arm the interrupt
     ReceiveData();
 
-    while (1) {
+    while (1)
+    {
         Command cm;
 
-        //Wait forever for a command
+        // Wait forever for a command
         qEvtQueue->ReceiveWait(cm);
 
-        //If this is a PROTOCOL_COMMAND, process it
-        if (cm.GetCommand() == PROTOCOL_COMMAND) {
-            switch (cm.GetTaskCommand()) {
-            case EVENT_PROTOCOL_RX_COMPLETE: {                                              //Process the command -- RX Complete
-            	// If the message is of insufficient length, don't do anything
-            	if(protocolMsgIdx < PROTOCOL_MINIMUM_MESSAGE_LENGTH) {
+        // If this is a PROTOCOL_COMMAND, process it
+        if (cm.GetCommand() == PROTOCOL_COMMAND)
+        {
+            switch (cm.GetTaskCommand())
+            {
+            case EVENT_PROTOCOL_RX_COMPLETE:
+            { // Process the command -- RX Complete
+                // If the message is of insufficient length, don't do anything
+                if (protocolMsgIdx < PROTOCOL_MINIMUM_MESSAGE_LENGTH)
+                {
                     // We can mark the rx buffer as safe to write to now
                     protocolMsgIdx = 0;
                     isProtocolMsgReady = false;
-            		break;
-            	}
+                    break;
+                }
 
                 // Allocate a command for storing the decoded message
                 Command protoRx(PROTOCOL_COMMAND, PROTOCOL_RX_DECODED_DATA);
-                uint8_t* decodedDataPtr = protoRx.AllocateData(protocolMsgIdx-1); // We ignore the delimiter byte, so this is the worse case size
+                uint8_t *decodedDataPtr = protoRx.AllocateData(protocolMsgIdx - 1); // We ignore the delimiter byte, so this is the worse case size
 
                 // Assert allocation was successful
                 SOAR_ASSERT(decodedDataPtr);
 
                 // When we get an Rx complete, we need to run the COBS decoder on the message
-                cobs_decode_result cobsRes = cobs_decode(decodedDataPtr, protocolMsgIdx, protocolRxBuffer, protocolMsgIdx-1);
+                cobs_decode_result cobsRes = cobs_decode(decodedDataPtr, protocolMsgIdx, protocolRxBuffer, protocolMsgIdx - 1);
 
                 // We can mark the rx buffer as safe to write to now
                 protocolMsgIdx = 0;
                 isProtocolMsgReady = false;
 
                 // If the COBS decode result is not OK, then we need to send a NACK
-                if (cobsRes.status != COBS_DECODE_OK) {
-					SOAR_PRINT("PROTO-INFO: COBS Decode Failed: %d %d\n", cobsRes.status, cobsRes.out_len);
+                if (cobsRes.status != COBS_DECODE_OK)
+                {
+                    SOAR_PRINT("PROTO-INFO: COBS Decode Failed: %d %d\n", cobsRes.status, cobsRes.out_len);
                     SendNACK();
                 }
-                else {
+                else
+                {
                     // Verify the checksum is correct, send a NACK and don't process if incorrect
-                    if (!Utils::IsCrc16Correct(decodedDataPtr, cobsRes.out_len - PROTOCOL_CHECKSUM_BYTES, *((uint16_t*)&decodedDataPtr[cobsRes.out_len - PROTOCOL_CHECKSUM_BYTES]))) {
+                    if (!Utils::IsCrc16Correct(decodedDataPtr, cobsRes.out_len - PROTOCOL_CHECKSUM_BYTES, *((uint16_t *)&decodedDataPtr[cobsRes.out_len - PROTOCOL_CHECKSUM_BYTES])))
+                    {
                         SOAR_PRINT("PROTO-INFO: Message Checksum Invalid!\n");
-                    	SendNACK();
+                        SendNACK();
                     }
-                    else {
+                    else
+                    {
                         // Set the message size to the decoded buffer size, minus the checksum, since that should be validated
                         protoRx.SetDataSize(cobsRes.out_len - PROTOCOL_CHECKSUM_BYTES);
 
@@ -114,9 +123,10 @@ void ProtocolTask::Run(void * pvParams)
                 protoRx.Reset();
                 break;
             }
-            case PROTOCOL_TX_REQUEST_DATA: {                                               //Process the command -- TX Request
+            case PROTOCOL_TX_REQUEST_DATA:
+            { // Process the command -- TX Request
 
-				SOAR_PRINT("PROTO-INFO-Vs: TX Request Received [%d]\n", cm.GetDataSize());
+                SOAR_PRINT("PROTO-INFO-Vs: TX Request Received [%d]\n", cm.GetDataSize());
 
                 // Allocate a command for storing the encoded message
                 Command protoTx(DATA_COMMAND, uartTaskCommand);
@@ -128,7 +138,8 @@ void ProtocolTask::Run(void * pvParams)
                 // Encode in COBS
                 cobs_encode_result cobsRes = cobs_encode(protoTx.GetDataPointer(), msgSize, cm.GetDataPointer(), cm.GetDataSize());
 
-                if (cobsRes.status != COBS_ENCODE_OK) {
+                if (cobsRes.status != COBS_ENCODE_OK)
+                {
                     protoTx.Reset();
                     SOAR_PRINT("WARNING: COBS encode failed in ProtocolTask TX case\n");
                 }
@@ -137,7 +148,8 @@ void ProtocolTask::Run(void * pvParams)
                 UARTTask::Inst().SendCommandReference(protoTx);
                 break;
             }
-            case EVENT_UART_INTERRUPT_ARM_ERROR: {
+            case EVENT_UART_INTERRUPT_ARM_ERROR:
+            {
                 // Attempt to receive data again
                 ReceiveData();
                 break;
@@ -162,7 +174,7 @@ bool ProtocolTask::ReceiveData()
 /**
  * @brief Sends a message to UART Task directly after wrapping it inside the message ID and checksum, and encoding with COBS
  */
-void ProtocolTask::SendData(uint8_t* data, uint16_t size, uint8_t msgId)
+void ProtocolTask::SendData(uint8_t *data, uint16_t size, uint8_t msgId)
 {
     uint16_t msgSize = GET_COBS_MAX_LEN(size + PROTOCOL_OVERHEAD_BYTES);
 
@@ -174,21 +186,22 @@ void ProtocolTask::SendData(uint8_t* data, uint16_t size, uint8_t msgId)
     arr[0] = msgId;
     memcpy(&(arr[1]), data, size);
     uint16_t chkSum = Utils::GetCRC16(arr, size + 1);
-    *((uint16_t*)&arr[preCobsSize - PROTOCOL_CHECKSUM_BYTES]) = chkSum;
+    *((uint16_t *)&arr[preCobsSize - PROTOCOL_CHECKSUM_BYTES]) = chkSum;
 
     // Send the data by wrapping in a COBS frame and sending direct to UART Task
-	Command protoTx(DATA_COMMAND, uartTaskCommand);
+    Command protoTx(DATA_COMMAND, uartTaskCommand);
     protoTx.AllocateData(msgSize);
 
     // Encode in COBS
     cobs_encode_result cobsEncRes = cobs_encode(protoTx.GetDataPointer(), msgSize, arr, preCobsSize);
 
-    if (cobsEncRes.status != COBS_ENCODE_OK) {
+    if (cobsEncRes.status != COBS_ENCODE_OK)
+    {
         protoTx.Reset();
         SOAR_PRINT("WARNING: COBS encode failed in ProtocolTask NACK case\n");
     }
 
-    SOAR_ASSERT(cobsEncRes.out_len+1 == msgSize, "COBS Size Mismatch %d %d\n", cobsEncRes.out_len+1, msgSize);
+    SOAR_ASSERT(cobsEncRes.out_len + 1 == msgSize, "COBS Size Mismatch %d %d\n", cobsEncRes.out_len + 1, msgSize);
     protoTx.GetDataPointer()[msgSize - 1] = 0x00;
     UARTTask::Inst().SendCommandReference(protoTx);
 }
@@ -198,19 +211,19 @@ void ProtocolTask::SendData(uint8_t* data, uint16_t size, uint8_t msgId)
  */
 void ProtocolTask::SendNACK(Proto::MessageID msgId, Proto::Node msgSource)
 {
-//    Proto::ControlMessage msg;
-//    msg.set_source(srcNode);
-//    msg.set_target(Proto::Node::NODE_RCU);
-//    Proto::AckNack nack;
-//    nack.set_acking_msg_source(msgSource);
-//    nack.set_acking_msg_id(msgId);
-//    msg.set_nack(nack);
-//
-//    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
-//    msg.serialize(writeBuffer);
-//
-//    // Send the control message
-//    SendData(writeBuffer.get_data(), writeBuffer.get_size(), (uint8_t)Proto::MessageID::MSG_CONTROL);
+    //    Proto::ControlMessage msg;
+    //    msg.set_source(srcNode);
+    //    msg.set_target(Proto::Node::NODE_FSB);
+    //    Proto::AckNack nack;
+    //    nack.set_acking_msg_source(msgSource);
+    //    nack.set_acking_msg_id(msgId);
+    //    msg.set_nack(nack);
+    //
+    //    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+    //    msg.serialize(writeBuffer);
+    //
+    //    // Send the control message
+    //    SendData(writeBuffer.get_data(), writeBuffer.get_size(), (uint8_t)Proto::MessageID::MSG_CONTROL);
 }
 
 /**
@@ -220,31 +233,37 @@ void ProtocolTask::SendNACK(Proto::MessageID msgId, Proto::Node msgSource)
 void ProtocolTask::InterruptRxData(uint8_t errors)
 {
     // If we already have an unprocessed protocol message, ignore this byte
-    if (!isProtocolMsgReady) {
+    if (!isProtocolMsgReady)
+    {
         // Check COBS byte for end of message
-        if (protocolRxChar == '\0' || protocolMsgIdx == PROTOCOL_RX_BUFFER_SZ_BYTES) {
-        	// If the message is of insufficient length, reset the buffer
-        	if(protocolMsgIdx < PROTOCOL_MINIMUM_MESSAGE_LENGTH) {
-        		protocolMsgIdx = 0;
-        		isProtocolMsgReady = false;
-        	}
-        	else {
-				// Null terminate and process
-				protocolRxBuffer[protocolMsgIdx++] = '\0';
-				isProtocolMsgReady = true;
+        if (protocolRxChar == '\0' || protocolMsgIdx == PROTOCOL_RX_BUFFER_SZ_BYTES)
+        {
+            // If the message is of insufficient length, reset the buffer
+            if (protocolMsgIdx < PROTOCOL_MINIMUM_MESSAGE_LENGTH)
+            {
+                protocolMsgIdx = 0;
+                isProtocolMsgReady = false;
+            }
+            else
+            {
+                // Null terminate and process
+                protocolRxBuffer[protocolMsgIdx++] = '\0';
+                isProtocolMsgReady = true;
 
-				// Notify the protocol task
-				Command cm(PROTOCOL_COMMAND, EVENT_PROTOCOL_RX_COMPLETE);
-				bool res = qEvtQueue->SendFromISR(cm);
+                // Notify the protocol task
+                Command cm(PROTOCOL_COMMAND, EVENT_PROTOCOL_RX_COMPLETE);
+                bool res = qEvtQueue->SendFromISR(cm);
 
-				// If we failed to send the event, we should reset the buffer, that way ProtocolTask doesn't stall
-				if (res == false) {
-					protocolMsgIdx = 0;
-					isProtocolMsgReady = false;
-				}
-        	}
+                // If we failed to send the event, we should reset the buffer, that way ProtocolTask doesn't stall
+                if (res == false)
+                {
+                    protocolMsgIdx = 0;
+                    isProtocolMsgReady = false;
+                }
+            }
         }
-        else {
+        else
+        {
             protocolRxBuffer[protocolMsgIdx++] = protocolRxChar;
         }
     }
@@ -257,10 +276,10 @@ void ProtocolTask::InterruptRxData(uint8_t errors)
  * @brief Handle protocol message
  * @param Protocol message to handle, passed by reference
  */
-void ProtocolTask::HandleProtocolMessage(Command& cmd)
+void ProtocolTask::HandleProtocolMessage(Command &cmd)
 {
     // Extract the message ID
-    uint8_t* buffer = cmd.GetDataPointer();
+    uint8_t *buffer = cmd.GetDataPointer();
     uint16_t bufSize = cmd.GetDataSize();
     Proto::MessageID msgId = (Proto::MessageID)buffer[0];
 
@@ -274,7 +293,8 @@ void ProtocolTask::HandleProtocolMessage(Command& cmd)
         readBuffer.push(buffer[i]);
 
     // Switch for each message ID we can handle
-    switch (msgId) {
+    switch (msgId)
+    {
     case Proto::MessageID::MSG_COMMAND:
         HandleProtobufCommandMessage(readBuffer);
         break;
@@ -296,7 +316,7 @@ void ProtocolTask::HandleProtocolMessage(Command& cmd)
  * @param writeBuffer The write buffer containing the serialized protobuf message
  * @param msgId The message ID of the message
  */
-void ProtocolTask::SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE>& writeBuffer, Proto::MessageID msgId)
+void ProtocolTask::SendProtobufMessage(EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> &writeBuffer, Proto::MessageID msgId)
 {
     // Note: This function runs inside the calling task
     SendData(writeBuffer.get_data(), writeBuffer.get_size(), (uint8_t)msgId);
