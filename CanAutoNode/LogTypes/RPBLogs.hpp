@@ -45,8 +45,16 @@ struct RPB_CAMERA_SIMULATE_BUTTON_COMMAND {
 	uint8_t button;
 };
 
-struct RPB_CAM_TX_CONTROL {
-	bool on;
+struct RPB_CAM_TX_CONTROL_COMMAND {
+	enum SET {
+		FREQUENCY,
+		POWER,
+		ENABLED
+	} fieldToSet;
+	uint16_t freq;
+	uint16_t power;
+	bool enabled;
+
 };
 
 #ifdef PACK_CAN_STRUCTS
@@ -60,7 +68,7 @@ struct RPB_CAM_TX_CONTROL {
 	X(RPB_AIR_BRAKES_COMMAND) \
 	X(RPB_FROM_DAQ_AIR_BRAKES_LEVEL) \
 	X(RPB_CAMERA_SIMULATE_BUTTON_COMMAND) \
-	X(RPC_CAM_TX_CONTROL)
+	X(RPB_CAM_TX_CONTROL_COMMAND)
 
 #define X(x) sizeof(x),
 const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
