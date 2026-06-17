@@ -19,6 +19,10 @@ struct DAQ_AIR_BRAKES_COMMAND {
 	bool airBrakesGo;
 };
 
+// Rocket state received from FCB (1 byte)
+struct DAQ_ROCKET_STATE {
+    uint8_t state;
+};
 
 #ifdef PACK_CAN_STRUCTS
 #pragma pack(pop)
@@ -27,7 +31,8 @@ struct DAQ_AIR_BRAKES_COMMAND {
 // Add CAN logs here in the order you want them
 #define DAQ_LOGS_X \
 	X(CanImuData6Axis) \
-	X(DAQ_AIR_BRAKES_COMMAND)
+	X(DAQ_AIR_BRAKES_COMMAND) \
+	X(DAQ_ROCKET_STATE)
 
 
 #define X(x) sizeof(x),
