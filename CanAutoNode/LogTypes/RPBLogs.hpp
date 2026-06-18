@@ -10,6 +10,7 @@
 
 #include "LogStructs.hpp"
 #include "CanAutoNodeDaughter.hpp"
+#include "IRCTramp.hpp"
 
 #ifdef PACK_CAN_STRUCTS
 #pragma pack(push,1)
@@ -37,6 +38,13 @@ struct RPB_FROM_DAQ_AIR_BRAKES_LEVEL {
 	uint8_t level;
 };
 
+struct RPB_IRCTRAMP_SET_COMMAND {
+	IRCTramp::POWER power;
+	IRCTramp::FREQUENCY freq;
+	bool setPower;
+	bool setFreq;
+};
+
 #ifdef PACK_CAN_STRUCTS
 #pragma pack(pop)
 #endif
@@ -46,7 +54,8 @@ struct RPB_FROM_DAQ_AIR_BRAKES_LEVEL {
 	X(RPB_CAMERA_RECORDING_COMMAND) \
 	X(RPB_CAMERA_SWITCH_COMMAND) \
 	X(RPB_AIR_BRAKES_COMMAND) \
-	X(RPB_FROM_DAQ_AIR_BRAKES_LEVEL)
+	X(RPB_FROM_DAQ_AIR_BRAKES_LEVEL) \
+	X(RPB_IRCTRAMP_SET_COMMAND)
 
 #define X(x) sizeof(x),
 const CanAutoNodeDaughter::LogInit RPB_Init[] = {RPB_CAN_LOGS};
