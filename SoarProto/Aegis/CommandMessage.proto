@@ -117,11 +117,41 @@ message FcbCommand {
         RSC_CAM3_ENABLE = 32;
         RSC_CAM3_DISABLE = 33;
 
+        
+
         RSC_AIR_BRAKES_ENABLE = 34;
         RSC_AIR_BRAKES_DISABLE = 35;
 
+        RSC_ERASE_FLASH = 36;
+
+        // Additional camera control commands (per-camera)
+        RSC_CAM1_POWER_BUTTON = 37;
+        RSC_CAM1_WIFI_BUTTON = 38;
+        RSC_CAM1_REC_START = 39;
+        RSC_CAM1_REC_STOP = 40;
+
+        RSC_CAM2_POWER_BUTTON = 41;
+        RSC_CAM2_WIFI_BUTTON = 42;
+        RSC_CAM2_REC_START = 43;
+        RSC_CAM2_REC_STOP = 44;
+
+        RSC_CAM3_POWER_BUTTON = 45;
+        RSC_CAM3_WIFI_BUTTON = 46;
+        RSC_CAM3_REC_START = 47;
+        RSC_CAM3_REC_STOP = 48;
+
+        // Global TX controls
+        RSC_CAM_TX_ON = 49;
+        RSC_CAM_TX_OFF = 50;
+        RSC_CAM_TX_FREQ_1258 = 51;
+        RSC_CAM_TX_FREQ_1280 = 52;
+        RSC_CAM_TX_POWER_25 = 53;
+        RSC_CAM_TX_POWER_200 = 54;
+        RSC_CAM_TX_POWER_1 = 55;
+        RSC_CAM_TX_POWER_4 = 56;
+
         //-- TECHNICAL --
-        RSC_NONE = 36;   // Invalid command, must be last
+        RSC_NONE = 57;   // Invalid command, must be last
 
         // TODO NEW : ADD NEW COMMANDS FOR HEATER? OR AIRBRAKES AND STUFF. OR CREATE A NEW MESSAGE TYPE FOR NON-FLIGHT-SEQUENCE COMMANDS?
     }
