@@ -14,7 +14,7 @@ Validate the FCB command, control, and telemetry wire contract after generating
 the Aegis modules:
 
 ```
-python -m unittest Aegis/test_fcb_modules.py
+python -m unittest Aegis/tests/test_fcb_modules.py
 ```
 
 The test imports the generated Python modules directly and checks fixed field

@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 
-GENERATED_PYTHON = Path(__file__).with_name("_Python")
+GENERATED_PYTHON = Path(__file__).resolve().parents[1] / "_Python"
 sys.path.insert(0, str(GENERATED_PYTHON))
 
 import CommandMessage_pb2 as command_proto
