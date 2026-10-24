@@ -10,6 +10,17 @@ GenerateProto.bat Ouroboros
 GenerateProto.bat Jad
 ```
 
+Validate the FCB command, control, and telemetry wire contract after generating
+the Aegis modules:
+
+```
+python -m unittest Aegis/test_fcb_modules.py
+```
+
+The test imports the generated Python modules directly and checks fixed field
+numbers, enum values, golden payloads, round trips, and malformed input. Add an
+ATB node or message only after its endpoint and routing contract is approved.
+
 You can also generate a specific proto by passing the filename or proto path:
 
 ```
