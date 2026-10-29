@@ -9,7 +9,7 @@ from crc import Calculator, Crc16 # pip install crc
 
 # Constants and helpers
 PROTO_CHKSUM_BYTES = 2
-PROTO_MSGID_BYTES = 2
+PROTO_MSGID_BYTES = 1
 
 def GetCOBSOverhead(unencodedSize):
     return unencodedSize // 254 + 1
@@ -18,8 +18,8 @@ def GetCOBSOverhead(unencodedSize):
 class Codec:
     @staticmethod
     def GetEncodedSize(unencodedSize):
-        # The encoded size is the unencoded size + 1 byte for the message ID + COBS Overhead + 1 byte for the 0x00 delimiter
-        return unencodedSize + 1 + GetCOBSOverhead(unencodedSize + 1) + 1
+        framed_size = unencodedSize + PROTO_MSGID_BYTES + PROTO_CHKSUM_BYTES
+        return framed_size + GetCOBSOverhead(framed_size) + 1
 
     @staticmethod
     def Encode(buf, len, msgId):
@@ -34,10 +34,8 @@ class Codec:
             encodedBuf[i+1] = buf[i]
 
         # Calculate a checksum
-        calc = Calculator(Crc16.CCITT)
+        calc = Calculator(Crc16.XMODEM)
         chksum = calc.checksum(encodedBuf)
-
-        print(f'Calculated checksum: {chksum}')
 
         # Then we append the checksum in little endian order
         encodedBuf.append(chksum & 0xFF)
@@ -57,13 +55,12 @@ class Codec:
         # Decode the buffer
         decodedBuf = cobs.decode(buf)
 
-        # Verify the checksum (untested)
+        # Verify the checksum
         bufChksm = decodedBuf[-2:]
         bufChksm = bufChksm[0] + (bufChksm[1] << 8)
-        calc = Calculator(Crc16.CCITT)
+        calc = Calculator(Crc16.XMODEM)
         chksum = calc.checksum(decodedBuf[:-2])
 
-        #TODO: This is untested, may not work
         # If the checksum is valid, get rid of the checksum. Otherwise, print and return invalid data
         if chksum == bufChksm:
             decodedBuf = decodedBuf[:-2]

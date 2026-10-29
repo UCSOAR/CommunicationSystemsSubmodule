@@ -4,12 +4,15 @@ from pathlib import Path
 
 
 GENERATED_PYTHON = Path(__file__).resolve().parents[1] / "_Python"
+PYTHON_CODEC = Path(__file__).resolve().parents[2] / "PythonTestProject"
+sys.path.insert(0, str(PYTHON_CODEC))
 sys.path.insert(0, str(GENERATED_PYTHON))
 
 import CommandMessage_pb2 as command_proto
 import ControlMessage_pb2 as control_proto
 import CoreProto_pb2 as core_proto
 import TelemetryMessage_pb2 as telemetry_proto
+from Codec import Codec
 from google.protobuf.message import DecodeError
 
 
@@ -33,6 +36,31 @@ class FcbProtocolContractTest(unittest.TestCase):
         payload = command.SerializeToString()
         self.assertEqual(bytes.fromhex("08 03 10 04 18 2a 22 02 08 24"), payload)
         self.assertEqual(command, command_proto.CommandMessage.FromString(payload))
+
+    def test_command_cobs_wire_frame_round_trip(self):
+        command = command_proto.CommandMessage(
+            source=core_proto.NODE_FSB,
+            target=core_proto.NODE_FCB,
+            source_sequence_num=42,
+            fcb_command=command_proto.FcbCommand(
+                command_enum=command_proto.FcbCommand.RSC_ERASE_FLASH
+            ),
+        )
+        payload = command.SerializeToString()
+
+        frame = Codec.Encode(payload, len(payload), core_proto.MSG_COMMAND)
+
+        self.assertEqual(
+            bytes.fromhex("0e 03 08 03 10 04 18 2a 22 02 08 24 52 e3 00"),
+            frame,
+        )
+        self.assertNotIn(0, frame[:-1])
+        self.assertEqual(0, frame[-1])
+        self.assertEqual(len(frame), Codec.GetEncodedSize(len(payload)))
+
+        message_id, decoded_payload = Codec.Decode(frame[:-1], len(frame) - 1)
+        self.assertEqual(core_proto.MSG_COMMAND, message_id)
+        self.assertEqual(command, command_proto.CommandMessage.FromString(decoded_payload))
 
     def test_control_contract_and_round_trip(self):
         self.assertEqual(4, control_proto.ControlMessage.SOURCE_SEQUENCE_NUM_FIELD_NUMBER)
