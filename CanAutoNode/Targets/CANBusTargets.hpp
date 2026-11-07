@@ -45,11 +45,13 @@
 #define CAN_GSE_TARGET_TC3 "TC3"
 #define CAN_GSE_TARGET_TCX_BOARDTYPE 4
 
+#define CAN_DEV_TARGET_SEB "SEB"
 // Pressure Transducer Daughter Targets
 #define CAN_GSE_TARGET_PT1 "PT1"
 #define CAN_GSE_TARGET_PT2 "PT2"
 #define CAN_GSE_TARGET_PT3 "PT3"
 #define CAN_GSE_TARGET_PTX_BOARDTYPE 5
+#define CAN_DEV_SEB 9
 
 // Load Cell Daughter Targets
 #define CAN_GSE_TARGET_LC1 "LC1"
