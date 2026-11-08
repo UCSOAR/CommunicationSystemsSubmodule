@@ -10,6 +10,19 @@ GenerateProto.bat Ouroboros
 GenerateProto.bat Jad
 ```
 
+Validate the FCB command, control, and telemetry wire contract after generating
+the Aegis modules:
+
+```
+python -m pip install -r requirements-test.txt
+python -m unittest Aegis/tests/test_fcb_modules.py
+```
+
+The test imports the generated Python modules directly and checks fixed field
+numbers, enum values, golden payloads, COBS/CRC framing, round trips, and
+malformed input. Add an ATB node or message only after its endpoint and routing
+contract is approved.
+
 You can also generate a specific proto by passing the filename or proto path:
 
 ```
@@ -54,7 +67,7 @@ python setup.py --ignore-version-diff
 [1_BYTE][ANY_LEN][2_BYTES]
 ``` 
 - Then we proceed to wrap the message inside [`COBS`](cobs.h) which delimits the end of each message with a `0x00`
-- The CHECKSUM is a <b>2-byte</b> CRC16 using the [CRC-16/XMODEM algorithm](https://crccalc.com/) - which is also represented as Crc16.CCITT when using the python [`crc`](https://pypi.org/project/crc/) package
+- The CHECKSUM is a <b>2-byte</b> CRC16 using the [CRC-16/XMODEM algorithm](https://crccalc.com/) - represented as `Crc16.XMODEM` in the python [`crc`](https://pypi.org/project/crc/) package
 - The message buffer max length can be adjusted as [PROTOCOL_RX_BUFFER_SZ_BYTES](https://github.com/StudentOrganisationForAerospaceResearch/SoarProto/blob/master/ProtocolTask.hpp) but should be kept to under <b>256 bytes</b>
 
 ## Installation (Windows)
